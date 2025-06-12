@@ -1,5 +1,4 @@
 from typing import Optional
-from unicodedata import category
 
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
@@ -11,7 +10,6 @@ from src.repositories.post_repository import PostRepository
 from src.schemas.posts import PostCreate, PostUpdate, PostRead
 from src.models.posts import Post
 from src.models.users import User
-from src.schemas.response import MessageResponse
 
 
 class PostService:
@@ -50,24 +48,9 @@ class PostService:
             )
             new_post.categories = categories
             data_post = self.post_repo.create(new_post)
-
-            return JSONResponse(
-                status_code=201,
-                content={
-                    "status_code": 201,
-                    "message": "Create Post Successfully",
-                    "data" : PostRead.model_validate(data_post).model_dump()
-                }
-            )
+            return data_post
         except Exception as e:
-            return JSONResponse(
-                status_code=400,
-                content={
-                    "status_code": 400,
-                    "error": "Create Failed",
-                    "message": f"Create Post Failed: {e}"
-                }
-            )
+            raise HTTPException (status_code=400, detail=f"Create post failed: {e}")
 
 
     def get_posts_by_user_id(self, user_id: str):
@@ -78,23 +61,9 @@ class PostService:
         self._get_user_and_check_status(user_id)
         try:
             posts = self.post_repo.get_posts_by_user_id(user_id)
-            return JSONResponse(
-                status_code=200,
-                content={
-                    "status_code": 200,
-                    "message": "Get posts successfully",
-                    "data": self._model_dum_response_data(posts)
-                }
-            )
+            return posts
         except Exception as e:
-            return JSONResponse(
-                status_code=400,
-                content={
-                    "status_code": 400,
-                    "error": "Get posts failed",
-                    "message": f"Get posts failed: {e}"
-                }
-            )
+           raise HTTPException(status_code=400, detail=f"Get posts by user failed: {e}")
 
 
     def get_post_by_id(self, post_id: str) -> Post:
@@ -147,14 +116,7 @@ class PostService:
             )
 
         except Exception as e:
-            return JSONResponse(
-                status_code=400,
-                content={
-                    "status_code":400,
-                    "error":"Get Posts Failed",
-                    "message":f"Get Posts Failed: {e}"
-                }
-            )
+            raise HTTPException( status_code=400, detail=f"Get posts failed: {e}")
 
     def _get_post_and_check_owner(self, post_id: str, user_id: str):
         post = self.post_repo.get(post_id)
@@ -166,30 +128,24 @@ class PostService:
 
     def update_post(self, post_id: str, post_update: PostUpdate, user_id: str):
         post = self._get_post_and_check_owner(post_id, user_id)
+        try:
         # Cập nhật thuộc tính ở đây
-        categories = []
-        if post_update.category_ids:
-            categories = self.db.query(Category).filter(Category.id.in_(post_update.category_ids)).all()
-        post.title = post_update.title
-        post.content = post_update.content
-        post.categories = categories
+            categories = []
+            if post_update.category_ids:
+                categories = self.db.query(Category).filter(Category.id.in_(post_update.category_ids)).all()
+            post.title = post_update.title
+            post.content = post_update.content
+            post.categories = categories
 
-        self.post_repo.update(post)
-        return JSONResponse(
-            status_code=200,
-            content={
-                "status_code": 200,
-                "message": "Update Successfully"
-            }
-        )
+            post = self.post_repo.update(post)
+            return post
+        except Exception as e:
+            raise HTTPException(status_code=400, detail=f"Update post failed: {e}")
 
     def delete_post(self, post_id: str, user_id: str):
-        post = self._get_post_and_check_owner(post_id, user_id)
-        self.post_repo.delete(post)
-        return JSONResponse(
-            status_code=200,
-            content={
-                "status_code": 200,
-                "message": "Deleted Successfully"
-            }
-        )
+        try:
+            post = self._get_post_and_check_owner(post_id, user_id)
+            self.post_repo.delete(post)
+            return post
+        except Exception as e:
+            raise HTTPException(status_code=400, detail=f"Delete post failed: {e}")

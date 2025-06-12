@@ -20,6 +20,7 @@ router = APIRouter()
 def get_user_service(db: Session = Depends(get_db)) -> UserService:
     return UserService(db)
 
+
 def get_token_log_service(db: Session = Depends(get_db)) -> TokenLogService:
     return TokenLogService(db)
 

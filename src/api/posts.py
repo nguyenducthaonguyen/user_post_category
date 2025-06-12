@@ -4,9 +4,8 @@ from starlette.responses import JSONResponse
 
 from src.schemas.posts import PostCreate, PostUpdate, PostRead
 
-from src.models.users import User
-from src.cores.dependencies import get_current_user, get_db
-from src.schemas.response import MessageResponse, StandardResponse, PaginatedResponse, ErrorResponse
+from src.cores.dependencies import  get_db
+from src.schemas.response import  StandardResponse, PaginatedResponse, ErrorResponse
 from src.services.post_service import PostService
 
 
@@ -34,7 +33,15 @@ def get_my_posts(
         request: Request,
         service: PostService = Depends(get_post_service)):
     current_user = request.state.user
-    return service.get_posts_by_user_id(current_user.id)
+    posts = service.get_posts_by_user_id(current_user.id)
+    return JSONResponse(
+        status_code=200,
+        content={
+            "status_code": 200,
+            "message": "Get my posts successfully",
+            "data": [PostRead.model_validate(post).model_dump() for post in posts]
+        }
+    )
 
 
 @router.get("/users/{user_id}", response_model=StandardResponse[list[PostRead]],
@@ -44,7 +51,15 @@ def get_my_posts(
                 404: {"model": ErrorResponse, "description": "Not found"}
             })
 def get_posts_by_user(user_id: str, service: PostService = Depends(get_post_service)):
-    return service.get_posts_by_user_id(user_id)
+    posts = service.get_posts_by_user_id(user_id)
+    return JSONResponse(
+        status_code=200,
+        content={
+            "status_code": 200,
+            "message": "Get posts by user successfully",
+            "data": [PostRead.model_validate(post).model_dump() for post in posts]
+        }
+    )
 
 
 @router.post("/", response_model=StandardResponse[PostRead])
@@ -54,14 +69,28 @@ def create_post(
     service: PostService = Depends(get_post_service)
 ):
     current_user = request.state.user
-    return service.create_post(post, current_user.id)
-
+    post = service.create_post(post, current_user.id)
+    return JSONResponse(
+        status_code=201,
+        content={
+            "status_code": 201,
+            "message": "Create post successfully",
+            "data": [PostRead.model_validate(post).model_dump()]
+        }
+    )
 
 
 @router.put("/{post_id}", response_model=StandardResponse)
 def update_post(request: Request, post_id: str, post: PostUpdate, service: PostService = Depends(get_post_service)):
     current_user = request.state.user
-    return service.update_post(post_id, post, current_user.id)
+    service.update_post(post_id, post, current_user.id)
+    return JSONResponse(
+        status_code=200,
+        content={
+            "status_code": 200,
+            "message": "Update post successfully"
+        }
+    )
 
 
 @router.get("/{post_id}", response_model=StandardResponse)
@@ -80,4 +109,11 @@ def get_post(post_id: str, service: PostService = Depends(get_post_service)):
 @router.delete("/{post_id}", response_model=StandardResponse)
 def delete_post(request: Request, post_id: str,  service: PostService = Depends(get_post_service)):
     current_user = request.state.user
-    return service.delete_post(post_id, current_user.id)
+    service.delete_post(post_id, current_user.id)
+    return JSONResponse(
+        status_code=200,
+        content={
+            "status_code": 200,
+            "message": "Delete post successfully"
+        }
+    )
