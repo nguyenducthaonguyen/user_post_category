@@ -33,3 +33,5 @@ def get_test_db():
         yield db
     finally:
         db.close()
+
+

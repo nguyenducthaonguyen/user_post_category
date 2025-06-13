@@ -15,28 +15,36 @@ class ActiveAccessTokenService:
     def create_token(self, token_create: ActiveAccessTokenCreate) -> ActiveAccessToken:
         return self.repo.add(token_create)
 
-    def get_tokens_by_user_id(self, user_id: str) -> List[ActiveAccessToken]:
+    def get_tokens_by_user_id(self, user_id: str) :
         return self.repo.get_access_tokens_by_user_id(user_id)
 
-    def delete_token(self, token: str) -> MessageResponse:
+    from fastapi import HTTPException
+
+    def delete_token(self, token: str):
         try:
             deleted = self.repo.delete_token(token)
             if deleted:
-                return MessageResponse(detail="Token deleted successfully")
+                return deleted
             else:
                 raise HTTPException(status_code=404, detail="Token not found")
-        except Exception:
-            raise HTTPException(status_code=400, detail="Deletion failed")
+        except HTTPException:
+            # Để HTTPException tự ném ra, không bắt lại
+            raise
+        except Exception as e:
+            raise HTTPException(status_code=400, detail=f"Deletion failed: {str(e)}")
 
-    def delete_tokens_by_user_id(self, user_id: str) -> MessageResponse:
+    def delete_tokens_by_user_id(self, user_id: str):
         try:
             deleted = self.repo.delete_tokens_by_user_id(user_id)
             if deleted:
-                return MessageResponse(detail="Tokens deleted successfully")
+                return deleted
             else:
                 raise HTTPException(status_code=404, detail="No tokens found for user")
+        except HTTPException:
+            # Để HTTPException tự ném ra, không bắt lại
+            raise
         except Exception:
             raise HTTPException(status_code=400, detail="Deletion failed")
 
     def cleanup_expired_tokens(self):
-        self.repo.delete_expired_tokens()
+        return self.repo.delete_expired_tokens()

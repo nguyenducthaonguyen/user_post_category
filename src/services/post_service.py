@@ -32,11 +32,8 @@ class PostService:
         return user
 
 
-    def _model_dum_response_data(self, posts):
-        return [PostRead.model_validate(post).model_dump() for post in posts]
-
-
     def create_post(self, post_data: PostCreate, user_id: str):
+        self._get_user_and_check_status(user_id)
         try:
             categories = []
             if post_data.category_ids:
@@ -101,7 +98,7 @@ class PostService:
                 content={
                     "status_code": 200,
                     "message":"Get Posts Successfully",
-                    "data": self._model_dum_response_data(posts),
+                    "data": [PostRead.model_validate(post).model_dump() for post in posts],
                     "pagination": {
                         "total": total,
                         "limit": limit,

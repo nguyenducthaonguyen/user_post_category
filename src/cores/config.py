@@ -23,6 +23,7 @@ class Settings(BaseSettings):
     TOKEN_USAGE_LOG_EXPIRE_MINUTES: int = 1
     RATE_LIMIT_MAX_REQUESTS: int = 10
     RATE_LIMIT_PERIOD_SECONDS: int = 10
+    SUSPICIOUS_REFRESH_TIME_WINDOW: int = 86400  # 24 hours in seconds
 
     SITE_DOMAIN: str = "myapp.com"
     ENVIRONMENT: Environment = Environment.PRODUCTION

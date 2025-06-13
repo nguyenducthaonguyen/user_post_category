@@ -6,7 +6,7 @@ from fastapi import Request, HTTPException
 from src.cores.dependencies import get_db
 from src.services.blacklist_token_service import BlacklistTokenService
 from src.cores.utils import validate_token_and_get_user
-from datetime import datetime
+from datetime import datetime, timezone
 
 EXCLUDE_PATHS = [
     "/api/v1/auth/login",
@@ -59,7 +59,7 @@ class AuthMiddleware(BaseHTTPMiddleware):
                 "error": HTTPStatus(status_code).phrase,
                 "message": message,
                 "path": path,
-                "timestamp": datetime.now().isoformat()
+                "timestamp": datetime.now(timezone.utc).isoformat()
             },
         )
 

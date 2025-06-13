@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+from os import access
 
 from sqlalchemy.orm import Session
 
@@ -17,23 +18,20 @@ class ActiveAccessTokenRepository:
         self.db.refresh(db_token)
         return db_token
 
-    def get_access_tokens_by_user_id(self, user_id: int) -> list[type[ActiveAccessToken]]:
+    def get_access_tokens_by_user_id(self, user_id: str) -> list[type[ActiveAccessToken]]:
         access_tokens = self.db.query(ActiveAccessToken).filter_by(user_id=user_id).all()
         return access_tokens
 
-    def delete_token(self, token: str) -> bool:
-        try:
-            deleted_count = (
-                self.db.query(ActiveAccessToken)
-                .filter_by(access_token=token)
-                .delete(synchronize_session=False)
-            )
-            self.db.commit()
-            return deleted_count > 0
-        except Exception as e:
-            self.db.rollback()
-            print("Failed to delete token", e)
-            return False
+    def delete_token(self, token: str) :
+        deleted_count = (
+            self.db.query(ActiveAccessToken)
+            .filter_by(access_token=token)
+            .delete(synchronize_session=False)
+        )
+        self.db.commit()
+        return deleted_count > 0
+
+
 
     def delete_tokens_by_user_id(self, user_id: str) -> bool:
         try:
@@ -58,5 +56,6 @@ class ActiveAccessTokenRepository:
         for token in expired_tokens:
             self.db.delete(token)
         self.db.commit()
+        return len(expired_tokens)
 
 

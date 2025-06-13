@@ -21,7 +21,7 @@ class SessionService:
             return False
         if session.revoked:
             return False
-        if session.expires_at < datetime.utcnow():
+        if session.expires_at < datetime.now(datetime.now().tzinfo):
             return False
         return True
 

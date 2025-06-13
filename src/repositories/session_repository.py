@@ -27,7 +27,7 @@ class SessionRepository:
         session.revoked = True
         self.db.commit()
 
-    def revoke_all_sessions(self, user_id: int):
+    def revoke_all_sessions(self, user_id: str):
         sessions = self.db.query(SessionModel).filter_by(user_id=user_id, revoked=False).all()
         for s in sessions:
             s.revoked = True

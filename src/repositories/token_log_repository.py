@@ -1,3 +1,4 @@
+from datetime import timezone
 from typing import Optional
 
 from sqlalchemy import text
@@ -25,16 +26,19 @@ class TokenLogRepository:
     def get_paginated(self, skip: int, limit: int) -> list[type[TokenLog]]:
         return self.db.query(TokenLog).offset(skip).limit(limit).all()
 
-    def get_last_log(self, user_id: int, action: str) -> Optional[TokenLog]:
-        sql = text("""SELECT * FROM token_logs
-            WHERE user_id = :user_id And action = :action
-            ORDER BY timestamp DESC
-            LIMIT 1
-        """)
-        result = self.db.execute(sql, {"user_id": user_id, "action": action}).fetchone()
-        if result:
-            # Nếu muốn trả về đối tượng TokenLog (ORM), bạn có thể map thủ công hoặc tạo đối tượng từ dict
-            return TokenLog(**result._mapping)  # _mapping trả về dict như row
-        return None
 
-
+    def get_last_log(self, user_id: str, action: str) -> Optional[TokenLog]:
+        """
+        Trả về log mới nhất cho user và action chỉ định.
+        Args:
+            user_id (str): ID của user.
+            action (str): Loại action (ví dụ: 'login', 'refresh').
+        Returns:
+            TokenLog | None: Log mới nhất hoặc None nếu không có.
+        """
+        return (
+            self.db.query(TokenLog)
+            .filter(TokenLog.user_id == user_id, TokenLog.action == action)
+            .order_by(TokenLog.timestamp.desc())
+            .first()
+        )
