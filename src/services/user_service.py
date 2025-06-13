@@ -16,20 +16,13 @@ class UserService:
     def __init__(self, db: Session):
         self.repo = UserRepository(db)
 
-    def get_user_by_id(self, user_id: str) -> JSONResponse:
+    def get_user_by_id(self, user_id: str):
         user = self.repo.get(user_id)
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
         if not user.is_active:
             raise HTTPException(status_code=403, detail="User blocked")
-        return JSONResponse(
-            status_code=200,
-            content={
-                "status_code":200,
-                "message": "Get user Successfully",
-                "data": UserRead.model_validate(user).model_dump()
-            }
-        )
+        return user
 
     def get_user_by_email(self, email: str) -> User:
         user = self.repo.get_user_by_email(email)
@@ -37,13 +30,9 @@ class UserService:
             raise HTTPException(status_code=404, detail="User not found")
         return user
 
-    def get_users_by_role_user(self) -> list[type[User]]:
-        return self.repo.get_users_by_role_user()
 
     def update_user(self, user_id: str, update_data: UserUpdateRequest):
-        user = self.repo.get(user_id)
-        if not user:
-            raise HTTPException(status_code=404, detail="User not found")
+        user = self.get_user_by_id(user_id)
 
         if update_data.email != user.email:
             existing_user = self.repo.get_user_by_email(str(update_data.email))
@@ -55,18 +44,10 @@ class UserService:
         user.gender = update_data.gender
 
         self.repo.update_user(user)
-        return JSONResponse(
-            status_code=200,
-            content={
-                "status_code":200,
-                "message": "Updated Successfully"
-            }
-        )
+        return user
 
     def update_user_password(self, user_id: str, data: PasswordChangeRequest):
-        user = self.repo.get(user_id)
-        if not user:
-            raise HTTPException(status_code=404, detail="User not found")
+        user = self.get_user_by_id(user_id)
 
         if not auth.verify_password(data.password_old, user.password):
             raise HTTPException(status_code=400, detail="Old password is incorrect")
@@ -86,27 +67,16 @@ class UserService:
         )
 
     def block_user(self, user_id: str):
-        user = self.repo.get(user_id)
-        if not user:
-            raise HTTPException(status_code=404, detail="User not found")
-
+        user = self.get_user_by_id(user_id)
         self.repo.block_user(user)
-        return JSONResponse(
-            status_code=200,
-            content={
-                "status_code": 200,
-                "message": "Block User successfully"
-            }
-        )
+        return user
 
     def get_all(self, page: int, limit: int, is_active: Optional[bool]) :
         try:
             skip = (page - 1) * limit
             total = self.repo.count_users(is_active=is_active)
             users = self.repo.get_all(skip=skip, limit=limit, is_active=is_active)
-            print(users)
             last_page = (total - 1) // limit + 1
-            print(total)
             return JSONResponse(
                 status_code=200,
                 content={
@@ -127,14 +97,7 @@ class UserService:
             )
 
         except Exception as e:
-            return JSONResponse(
-                status_code=400,
-                content={
-                    "status_code": 400,
-                    "error": "Get Uses Failed",
-                    "message": f"Get Users Failed: {e}"
-                }
-            )
+            raise HTTPException(status_code=500, detail=f"An error occurred while retrieving users: {str(e)}")
 
     # Admin-specific services
     def get_user_by_id_for_admin(self, user_id: str) -> User:
@@ -144,7 +107,7 @@ class UserService:
         return user
 
     def block_user_for_admin(self, user_id: str):
-        user = self.repo.get(user_id)
+        user = self.get_user_by_id_for_admin(user_id)
         print(user.is_active)
         if not user.is_active:
             raise HTTPException(status_code=400, detail="User was already blocked")
@@ -153,7 +116,7 @@ class UserService:
         return user
 
     def unblock_user_for_admin(self, user_id: str):
-        user = self.repo.get(user_id)
+        user = self.get_user_by_id_for_admin(user_id)
         if user.is_active:
             raise HTTPException(status_code=400, detail="User was already unblocked")
         self.repo.unblock_user(user)
@@ -161,17 +124,14 @@ class UserService:
 
 
     def delete_user(self, user_id: str):
+        user = self.get_user_by_id_for_admin(user_id)
+
         try:
-            user = self.repo.get(user_id)
-            if not user:
-                raise HTTPException(status_code=404, detail="User not found")
-            print(user.is_active)
             self.repo.delete_user_and_posts(user)
-            print(user.is_active)
             return user
 
-        except SQLAlchemyError as e:
-            raise HTTPException(status_code=500, detail=f"An error occurred while deleting the user; {str(e)}")
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"An error occurred while deleting the user: {str(e)}")
 
     def get_all_for_admin(self, page: int, limit: int, name: Optional[str] = None, is_active: Optional[bool] = None, role: Optional[RoleEnum] = None):
         skip = (page - 1) * limit

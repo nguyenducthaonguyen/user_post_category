@@ -77,13 +77,9 @@ def user_service(mock_repo):
 
 # 3. Test: User tồn tại và active
 def test_should_return_user_when_user_exists_and_is_active(user_service, mock_users):
-    response = user_service.get_user_by_id("user-id-1")
-    assert response.status_code == 200
-    data = json.loads(response.body.decode())
-    user = mock_users[0]
-    assert data["data"]["email"] == user.email
-    assert data["data"]["role"] == user.role
-    assert data["data"]["gender"] == user.gender
+    user = user_service.get_user_by_id(mock_users[0].id)
+    assert user == mock_users[0]
+    assert user.is_active is True
 
 # 4. Test: User không tồn tại (theo id)
 def test_should_return_404_when_user_not_found(user_service):
@@ -115,7 +111,7 @@ def test_should_return_user_when_email_exists(user_service, mock_users):
     assert user == mock_users[1]
 
 # 8. Test: get_all trả về đúng list user
-def test_should_return_all_users(user_service, mock_users):
+def test_should_return_all_users_when_all_success(user_service, mock_users):
     response = user_service.get_all(page=1, limit=10, is_active=None)
     assert response.status_code == 200
     data = json.loads(response.body.decode())
@@ -142,9 +138,7 @@ def test_should_return_200_when_update_user_with_valid_data(user_service, mocker
     mocker.patch.object(user_service.repo, "update_user", return_value=None)
 
     response = user_service.update_user(user.id, updated_data)
-    assert response.status_code == 200
-    data = response.body.decode()
-    assert "Updated Successfully" in data
+    assert response.email == "new_email@example.com"
 
 def test_should_raise_400_when_email_already_registered(user_service,mocker, mock_users):
     user = mock_users[0]
@@ -305,3 +299,91 @@ def test_should_raise_404_when_user_unblock_for_admin_not_found(user_service, mo
         user_service.unblock_user_for_admin("not-exist-id")
     assert exc_info.value.status_code == 404
     assert "User not found" in str(exc_info.value.detail)
+
+def test_should_raise_404_when_delete_user_not_found(user_service, mocker, mock_users):
+    mocker.patch.object(user_service.repo, "get", return_value=None)
+    with pytest.raises(HTTPException) as exc_info:
+        user_service.delete_user("not-exist-id")
+    assert exc_info.value.status_code == 404
+    assert "User not found" in str(exc_info.value.detail)
+
+def test_should_return_200_when_delete_user_success(user_service, mocker, mock_users):
+    user = mock_users[0]
+    mocker.patch.object(user_service.repo, "get", return_value=user)
+    mocker.patch.object(user_service.repo, "delete_user", return_value=None)
+
+    response = user_service.delete_user(user.id)
+    assert response.id == user.id
+    assert response.username == user.username
+
+def test_should_raise_500_when_delete_user_fails(user_service, mocker, mock_users):
+    user = mock_users[0]
+    mocker.patch.object(user_service, "get_user_by_id_for_admin", return_value=user)
+    mocker.patch.object(user_service.repo, "delete_user_and_posts", side_effect=Exception("Database error"))
+
+    with pytest.raises(HTTPException) as exc_info:
+        user_service.delete_user(user.id)
+    assert exc_info.value.status_code == 500
+    assert "An error occurred while deleting the user" in str(exc_info.value.detail)
+
+def test_should_return_500_when_get_all_user_fails(user_service, mocker):
+    mocker.patch.object(user_service.repo, "get_all", side_effect=Exception("Database error"))
+    mocker.patch.object(user_service.repo, "count_users", side_effect=Exception("Database error"))
+
+
+    with pytest.raises(HTTPException) as exc_info:
+        user_service.get_all(page=1, limit=10, is_active=True)
+    assert exc_info.value.status_code == 500
+    assert "An error occurred while retrieving users: Database error" in str(exc_info.value.detail)
+
+def test_should_return_user_when_block_user_for_user(user_service, mocker, mock_users):
+    user = mock_users[0]  # user đang active
+
+    # Patch repo.get trả về user đang active
+    mocker.patch.object(user_service.repo, "get", return_value=user)
+
+    # Patch phương thức block_user để giả lập hành động block user
+    def fake_block_user(u):
+        u.is_active = False  # giả lập bị block
+    mocker.patch.object(user_service.repo, "block_user", side_effect=fake_block_user)
+
+    response = user_service.block_user(user.id)
+    assert response == user
+    assert response.is_active is False
+
+
+def test_should_raise_400_when_update_user_for_email_already_registered(user_service, mocker, mock_users):
+    # user hiện tại
+    user = mock_users[0]
+    user.id = "1"
+    user.email = "Nguyen2@gmail.com"
+
+    # user khác đã dùng email muốn update
+    other_user = mock_users[1]
+    other_user.id = "2"
+    other_user.email = "Nguyen@gmail.com"
+
+    # Dữ liệu update: email đã có người dùng khác
+    updated_data = UserUpdateRequest(
+        email="Nguyen@gmail.com",  # Trùng với other_user
+        fullname="New Name",
+        gender="male"
+    )
+    updated_data2 = UserUpdateRequest(
+        email="Nguyen2@gmail.com",  # Trùng với other_user
+        fullname="New Name",
+        gender="male"
+    )
+
+
+    with pytest.raises(HTTPException) as exc_info:
+        user_service.update_user(user.id, updated_data)
+
+    assert exc_info.value.status_code == 400
+    assert exc_info.value.detail == "Email already registered"
+
+    # Kiểm tra nếu email không trùng với user khác thì không raise lỗi
+    response = user_service.update_user(user.id, updated_data2)
+    assert response.email == user.email
+
+

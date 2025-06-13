@@ -2,6 +2,7 @@ from typing import Optional
 
 from fastapi import APIRouter, Depends, Query, Request
 from sqlalchemy.orm import Session
+from starlette.responses import JSONResponse
 
 from src.schemas.response import MessageResponse, StandardResponse, PaginatedResponse
 from src.services.user_service import UserService
@@ -33,7 +34,15 @@ def get_current_user_info(
     service: UserService = Depends(get_user_service)
 ):
     current_user = request.state.user
-    return service.get_user_by_id(current_user.id)
+    user = service.get_user_by_id(current_user.id)
+    return JSONResponse(
+        status_code=200,
+        content={
+            "status_code": 200,
+            "message": "Current user info retrieved successfully",
+            "data": [UserRead.model_validate(user).model_dump()]
+        }
+    )
 
 
 @router.get("/{user_id}", response_model=StandardResponse[UserRead])
@@ -41,7 +50,15 @@ def get_user_by_id(
     user_id: str,
     service: UserService = Depends(get_user_service)
 ):
-    return service.get_user_by_id(user_id)
+    user = service.get_user_by_id(user_id)
+    return JSONResponse(
+        status_code=200,
+        content={
+            "status_code": 200,
+            "message": "User found",
+            "data": [UserRead.model_validate(user).model_dump()]
+        }
+    )
 
 
 @router.put("/me", response_model=StandardResponse[UserRead])
@@ -51,7 +68,14 @@ def update_current_user_info(
     service: UserService = Depends(get_user_service)
 ):
     current_user = request.state.user
-    return service.update_user(current_user.id, user_update)
+    user = service.update_user(current_user.id, user_update)
+    return JSONResponse(
+        status_code=200,
+        content={
+            "status_code": 200,
+            "message": "User updated successfully",
+                }
+    )
 
 
 @router.patch("/me/change-password", response_model=StandardResponse)
@@ -70,4 +94,11 @@ def deactivate_current_user(
     service: UserService = Depends(get_user_service)
 ):
     current_user = request.state.user
-    return service.block_user(current_user.id)
+    service.block_user(current_user.id)
+    return JSONResponse(
+        status_code=200,
+        content={
+            "status_code": 200,
+            "message": "User block successfully"
+        }
+    )
