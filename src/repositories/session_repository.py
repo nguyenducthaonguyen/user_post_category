@@ -1,7 +1,8 @@
-from sqlalchemy.orm import Session
-from src.models.sessions import Session as SessionModel
 from datetime import datetime, timezone
 
+from sqlalchemy.orm import Session
+
+from src.models.sessions import Session as SessionModel
 from src.schemas.session import SessionCreate
 
 

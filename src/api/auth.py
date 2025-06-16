@@ -1,7 +1,8 @@
 from datetime import datetime, timedelta, timezone
 from typing import Optional
 
-from fastapi import APIRouter, HTTPException, Depends, Response, Request, status
+from fastapi import (APIRouter, Depends, HTTPException, Request, Response,
+                     status)
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
@@ -19,7 +20,6 @@ from src.services.auth_service import AuthService
 from src.services.blacklist_token_service import BlacklistTokenService
 from src.services.session_service import SessionService
 from src.services.token_log_service import TokenLogService
-
 
 router = APIRouter()
 

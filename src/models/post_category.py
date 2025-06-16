@@ -1,4 +1,5 @@
-from sqlalchemy import Table, Column, ForeignKey, String
+from sqlalchemy import Column, ForeignKey, String, Table
+
 from src.cores.database import Base
 
 post_category = Table(

@@ -1,6 +1,6 @@
-from typing import Optional, List
+from typing import List, Optional
 
-from pydantic import BaseModel, constr, ConfigDict
+from pydantic import BaseModel, ConfigDict, constr
 
 from src.schemas.categories import CategoryRead
 

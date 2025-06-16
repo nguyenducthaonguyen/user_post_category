@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 import pytest
 
 from src.models import User
-from src.models.enums import RoleEnum, GenderEnum
+from src.models.enums import GenderEnum, RoleEnum
 from src.models.token_logs import TokenLog
 from src.schemas.token_log import TokenLogCreate
 from src.services.token_log_service import TokenLogService

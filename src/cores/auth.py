@@ -1,7 +1,8 @@
+from datetime import UTC, datetime, timedelta
+
 from fastapi import HTTPException
+from jose import ExpiredSignatureError, JWTError, jwt
 from passlib.context import CryptContext
-from jose import jwt, JWTError, ExpiredSignatureError
-from datetime import datetime, timedelta, UTC
 
 from src.cores.config import settings
 

@@ -1,12 +1,13 @@
+from datetime import datetime, timezone
 from http import HTTPStatus
 
+from fastapi import HTTPException, Request
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import JSONResponse
-from fastapi import Request, HTTPException
+
 from src.cores.dependencies import get_db
-from src.services.blacklist_token_service import BlacklistTokenService
 from src.cores.utils import validate_token_and_get_user
-from datetime import datetime, timezone
+from src.services.blacklist_token_service import BlacklistTokenService
 
 EXCLUDE_PATHS = ["/api/v1/auth/login", "/api/v1/auth/register", "/api/v1/auth/refresh"]
 

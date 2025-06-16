@@ -1,6 +1,7 @@
 import os
 from enum import Enum
 from typing import Optional
+
 from pydantic import MySQLDsn
 from pydantic_settings import BaseSettings
 

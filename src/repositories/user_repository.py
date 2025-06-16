@@ -1,11 +1,12 @@
-from typing import Optional, List
+from typing import List, Optional
+
 from sqlalchemy import func
-from sqlalchemy.orm import Session, joinedload
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import Session, joinedload
 
 from src.models import Session as SessionModels
-from src.models.users import User, RoleEnum
 from src.models.posts import Post
+from src.models.users import RoleEnum, User
 
 
 class UserRepository:

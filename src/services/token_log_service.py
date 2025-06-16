@@ -4,8 +4,8 @@ from typing import List
 from sqlalchemy.orm import Session
 
 from src.cores.config import settings
-from src.schemas.token_log import TokenLogCreate, TokenLogResponse
 from src.repositories.token_log_repository import TokenLogRepository
+from src.schemas.token_log import TokenLogCreate, TokenLogResponse
 
 
 class TokenLogService:

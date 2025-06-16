@@ -4,7 +4,7 @@ from starlette.responses import JSONResponse
 
 from src.cores.exceptions import APIException
 from src.repositories.category_repository import CategoryRepository
-from src.schemas.categories import CategoryCreate, CategoryUpdate, CategoryRead
+from src.schemas.categories import CategoryCreate, CategoryRead, CategoryUpdate
 
 
 class CategoryService:

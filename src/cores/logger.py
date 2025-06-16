@@ -1,8 +1,7 @@
 import logging
-from logging.handlers import RotatingFileHandler
-import sys
 import os
-
+import sys
+from logging.handlers import RotatingFileHandler
 
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO").upper()
 

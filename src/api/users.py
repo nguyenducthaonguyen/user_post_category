@@ -4,12 +4,13 @@ from fastapi import APIRouter, Depends, Query, Request
 from sqlalchemy.orm import Session
 from starlette.responses import JSONResponse
 
-from src.schemas.response import MessageResponse, StandardResponse, PaginatedResponse
-from src.services.user_service import UserService
+from src.cores.dependencies import get_current_user, get_db
 from src.models.users import User
-from src.schemas.users import UserRead, UserUpdateRequest, PasswordChangeRequest
-from src.cores.dependencies import get_db, get_current_user
-
+from src.schemas.response import (MessageResponse, PaginatedResponse,
+                                  StandardResponse)
+from src.schemas.users import (PasswordChangeRequest, UserRead,
+                               UserUpdateRequest)
+from src.services.user_service import UserService
 
 router = APIRouter()
 

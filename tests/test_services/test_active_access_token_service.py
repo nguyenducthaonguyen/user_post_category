@@ -5,7 +5,7 @@ from fastapi import HTTPException
 
 from src.models import User
 from src.models.active_access_tokens import ActiveAccessToken
-from src.models.enums import RoleEnum, GenderEnum
+from src.models.enums import GenderEnum, RoleEnum
 from src.schemas.active_access_tokens import ActiveAccessTokenCreate
 from tests.conftest import get_test_db
 
@@ -104,7 +104,8 @@ def sample_active_access_tokens(db_session):
 
 @pytest.fixture
 def active_access_token_service(db_session):
-    from src.services.active_access_token_service import ActiveAccessTokenService
+    from src.services.active_access_token_service import \
+        ActiveAccessTokenService
 
     return ActiveAccessTokenService(db=db_session)
 

@@ -2,12 +2,11 @@ from fastapi import APIRouter, Depends, Query, Request
 from sqlalchemy.orm import Session
 from starlette.responses import JSONResponse
 
-from src.schemas.posts import PostCreate, PostUpdate, PostRead
-
 from src.cores.dependencies import get_db
-from src.schemas.response import StandardResponse, PaginatedResponse, ErrorResponse
+from src.schemas.posts import PostCreate, PostRead, PostUpdate
+from src.schemas.response import (ErrorResponse, PaginatedResponse,
+                                  StandardResponse)
 from src.services.post_service import PostService
-
 
 router = APIRouter()
 

@@ -3,19 +3,19 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request
 from fastapi.encoders import jsonable_encoder
-from fastapi.exceptions import RequestValidationError, HTTPException
+from fastapi.exceptions import HTTPException, RequestValidationError
 from starlette import status
 from starlette.responses import JSONResponse
 
 from src.api import api_router
 from src.cores.config import settings
+from src.cores.database import Base, engine
 from src.cores.dependencies import get_db
 from src.cores.exceptions import APIException
 from src.middlewares.access_log import AccessLogMiddleware
 from src.middlewares.auth_middleware import AuthMiddleware
 from src.middlewares.rate_limiter import RateLimiterMiddleware
 from src.models import *
-from src.cores.database import engine, Base
 from src.services.active_access_token_service import ActiveAccessTokenService
 from src.services.blacklist_token_service import BlacklistTokenService
 from src.services.rate_limiter_service import RateLimiterService

@@ -3,6 +3,7 @@ from typing import Optional
 
 from sqlalchemy import text
 from sqlalchemy.orm import Session
+
 from src.models.token_logs import TokenLog
 from src.schemas.token_log import TokenLogCreate
 

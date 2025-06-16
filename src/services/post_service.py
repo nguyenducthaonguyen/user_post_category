@@ -5,11 +5,11 @@ from sqlalchemy.orm import Session
 from starlette.responses import JSONResponse
 
 from src.models import Category
-from src.repositories import UserRepository, CategoryRepository
-from src.repositories.post_repository import PostRepository
-from src.schemas.posts import PostCreate, PostUpdate, PostRead
 from src.models.posts import Post
 from src.models.users import User
+from src.repositories import CategoryRepository, UserRepository
+from src.repositories.post_repository import PostRepository
+from src.schemas.posts import PostCreate, PostRead, PostUpdate
 
 
 class PostService:

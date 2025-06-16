@@ -2,8 +2,8 @@ from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 
-from src.cores.utils import validate_token_and_get_user
 from src.cores.database import SessionLocal
+from src.cores.utils import validate_token_and_get_user
 from src.models.enums import RoleEnum
 from src.models.users import User
 

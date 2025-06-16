@@ -1,9 +1,10 @@
 from datetime import datetime
 
 from sqlalchemy.orm import Session
+
+from src.models.sessions import Session as SessionModel
 from src.repositories.session_repository import SessionRepository
 from src.schemas.session import SessionCreate
-from src.models.sessions import Session as SessionModel
 
 
 class SessionService:

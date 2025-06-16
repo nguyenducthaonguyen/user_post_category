@@ -1,6 +1,8 @@
-from starlette.middleware.base import BaseHTTPMiddleware
-from fastapi import Request
 import time
+
+from fastapi import Request
+from starlette.middleware.base import BaseHTTPMiddleware
+
 from src.cores.logger import get_logger
 
 logger = get_logger("access")

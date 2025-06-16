@@ -1,15 +1,14 @@
 import json
-
-import pytest
 from unittest.mock import MagicMock, patch
 
+import pytest
 from fastapi import HTTPException
 from pydantic import ValidationError
 
 from src.cores import auth
-from src.schemas.users import UserUpdateRequest, PasswordChangeRequest
+from src.models.users import GenderEnum, RoleEnum, User
+from src.schemas.users import PasswordChangeRequest, UserUpdateRequest
 from src.services.user_service import UserService
-from src.models.users import User, RoleEnum, GenderEnum
 
 
 # 1. Fixture trả về danh sách user (list)

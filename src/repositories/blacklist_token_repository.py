@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from sqlalchemy.orm import Session
+
 from src.models.blacklisted_tokens import BlacklistedToken
 from src.schemas.blacklist_token import BlacklistedTokenCreate
 

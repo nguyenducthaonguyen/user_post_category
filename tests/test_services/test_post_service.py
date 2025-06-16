@@ -4,7 +4,7 @@ import pytest
 from fastapi import HTTPException
 
 from src.models import Category, Post, User
-from src.models.enums import RoleEnum, GenderEnum
+from src.models.enums import GenderEnum, RoleEnum
 from src.schemas.posts import PostCreate, PostUpdate
 from src.services.post_service import PostService
 from tests.conftest import get_test_db

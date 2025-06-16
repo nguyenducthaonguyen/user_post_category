@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends
-from src.api import admin, posts, users, auth, categories
+
+from src.api import admin, auth, categories, posts, users
 from src.cores.dependencies import require_roles
 from src.models.users import RoleEnum
 

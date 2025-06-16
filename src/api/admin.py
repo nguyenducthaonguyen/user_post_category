@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import List, Optional
 
 from fastapi import APIRouter, Depends, Query
 from fastapi.responses import ORJSONResponse
@@ -7,12 +7,12 @@ from starlette.responses import JSONResponse
 
 from src.cores.dependencies import get_db
 from src.models.enums import RoleEnum
+from src.schemas.response import (MessageResponse, PaginatedResponse,
+                                  StandardResponse)
 from src.schemas.token_log import TokenLogResponse
 from src.schemas.users import UserReadAdmin
-from src.schemas.response import MessageResponse, PaginatedResponse, StandardResponse
 from src.services.token_log_service import TokenLogService
 from src.services.user_service import UserService
-
 
 router = APIRouter()
 
