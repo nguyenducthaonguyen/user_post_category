@@ -1,16 +1,11 @@
-import os
+import tests.load_env  # noqa: F401
 
+import os
 import pytest
-from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-
-# Xác định đường dẫn tuyệt đối đến .env.test ở thư mục gốc project
-ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-ENV_PATH = os.path.join(ROOT_DIR, ".env.test")
-load_dotenv(dotenv_path=ENV_PATH, override=True)
-
 from src.cores.database import Base
+
 
 TEST_DATABASE_URL = os.getenv("DATABASE_URL")
 test_engine = create_engine(
