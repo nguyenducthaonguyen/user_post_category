@@ -104,7 +104,8 @@ def sample_active_access_tokens(db_session):
 
 @pytest.fixture
 def active_access_token_service(db_session):
-    from src.services.active_access_token_service import ActiveAccessTokenService
+    from src.services.active_access_token_service import \
+        ActiveAccessTokenService
 
     return ActiveAccessTokenService(db=db_session)
 

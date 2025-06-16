@@ -4,7 +4,8 @@ from starlette.responses import JSONResponse
 
 from src.cores.dependencies import get_db
 from src.schemas.posts import PostCreate, PostRead, PostUpdate
-from src.schemas.response import ErrorResponse, PaginatedResponse, StandardResponse
+from src.schemas.response import (ErrorResponse, PaginatedResponse,
+                                  StandardResponse)
 from src.services.post_service import PostService
 
 router = APIRouter()

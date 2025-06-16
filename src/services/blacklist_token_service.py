@@ -2,7 +2,8 @@ from datetime import datetime, timedelta, timezone
 
 from sqlalchemy.orm import Session
 
-from src.repositories.blacklist_token_repository import BlacklistedTokenRepository
+from src.repositories.blacklist_token_repository import \
+    BlacklistedTokenRepository
 from src.schemas.blacklist_token import BlacklistedTokenCreate
 
 

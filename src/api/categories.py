@@ -6,7 +6,8 @@ from src.cores.dependencies import get_db
 from src.models import Session
 from src.schemas.categories import CategoryCreate, CategoryRead, CategoryUpdate
 from src.schemas.response import ErrorResponse, StandardResponse
-from src.services.category_service import CategoryService  # adjust import as needed
+from src.services.category_service import \
+    CategoryService  # adjust import as needed
 
 router = APIRouter(prefix="/categories")
 
