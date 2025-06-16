@@ -1,0 +1,14 @@
+fastapi[all]
+sqlalchemy==2.0.41
+pymysql
+python-jose[cryptography]
+passlib[bcrypt]
+
+pytest
+pytest-cov
+flake8
+black
+isort
+mypy
+alembic
+python-dotenv
