@@ -13,21 +13,22 @@ services:
       - mysql
 
   mysql:
-    image: mysql:8.0
+    image: mysql:8
+    restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: Nguyen@1997
+      MYSQL_ROOT_PASSWORD: "Nguyen@1997"
       MYSQL_DATABASE: test_user_post
       MYSQL_USER: root
-      MYSQL_PASSWORD: Nguyen@1997
+      MYSQL_PASSWORD: "Nguyen@1997"
     ports:
-      - "3307:3306"
+      - "3307:3306"  # tránh port 3306 đang bị chiếm
     volumes:
       - mysql-data:/var/lib/mysql
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-P", "3306", "--silent"]
       interval: 10s
       timeout: 5s
-      retries: 3
+      retries: 5
 
 volumes:
   mysql-data:
