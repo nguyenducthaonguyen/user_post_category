@@ -1,11 +1,11 @@
-import tests.load_env  # noqa: F401
-
 import os
+
 import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from src.cores.database import Base
 
+import tests.load_env  # noqa: F401
+from src.cores.database import Base
 
 TEST_DATABASE_URL = os.getenv("DATABASE_URL")
 test_engine = create_engine(
