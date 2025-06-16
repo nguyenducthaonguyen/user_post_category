@@ -6,10 +6,8 @@ from starlette.responses import JSONResponse
 
 from src.cores.dependencies import get_current_user, get_db
 from src.models.users import User
-from src.schemas.response import (MessageResponse, PaginatedResponse,
-                                  StandardResponse)
-from src.schemas.users import (PasswordChangeRequest, UserRead,
-                               UserUpdateRequest)
+from src.schemas.response import MessageResponse, PaginatedResponse, StandardResponse
+from src.schemas.users import PasswordChangeRequest, UserRead, UserUpdateRequest
 from src.services.user_service import UserService
 
 router = APIRouter()

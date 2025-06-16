@@ -5,8 +5,7 @@ import pytest
 from src.models import TokenUsageLog
 from src.services.rate_limiter_service import RateLimiterService
 from tests.test_services.test_active_access_token_service import db_session
-from tests.test_services.test_black_token_service import \
-    blacklist_token_service
+from tests.test_services.test_black_token_service import blacklist_token_service
 
 
 @pytest.fixture

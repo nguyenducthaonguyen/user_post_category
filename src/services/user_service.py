@@ -9,8 +9,12 @@ from src.cores import auth
 from src.models.enums import RoleEnum
 from src.models.users import User
 from src.repositories.user_repository import UserRepository
-from src.schemas.users import (PasswordChangeRequest, UserRead, UserReadAdmin,
-                               UserUpdateRequest)
+from src.schemas.users import (
+    PasswordChangeRequest,
+    UserRead,
+    UserReadAdmin,
+    UserUpdateRequest,
+)
 
 
 class UserService:
