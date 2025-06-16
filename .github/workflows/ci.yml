@@ -10,6 +10,22 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    services:
+      mysql:
+        image: mysql:8
+        env:
+          MYSQL_ROOT_PASSWORD: Nguyen@1997
+          MYSQL_DATABASE: test_user_post
+          MYSQL_USER: root
+          MYSQL_PASSWORD: Nguyen@1997
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
@@ -22,12 +38,15 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install fastapi[all]
-        pip install sqlalchemy==2.0.41
-        pip install pymysql
-        pip install python-jose[cryptography]
-        pip install passlib[bcrypt]
-        pip install pytest pytest-cov flake8 black isort mypy alembic
+        pip install -r requirements.txt
+
+    - name: Wait for MySQL to be ready
+      run: |
+        for i in {1..30}; do
+          mysqladmin ping -h 127.0.0.1 -P 3306 --silent && break
+          echo "Waiting for MySQL..."
+          sleep 2
+        done
 
     - name: Run code format checks
       run: |
@@ -36,6 +55,7 @@ jobs:
         flake8 .
 
     - name: Run tests with coverage
+      env:
+        DATABASE_URL: mysql+pymysql://root:Nguyen%401997@127.0.0.1:3306/test_user_post
       run: |
         pytest --cov=.
-
