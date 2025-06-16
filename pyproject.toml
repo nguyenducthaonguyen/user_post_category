@@ -9,3 +9,6 @@ use_parentheses = true
 [tool.black]
 line-length = 200
 target-version = ['py313']
+
+[tool.ruff]
+line-length = 200
