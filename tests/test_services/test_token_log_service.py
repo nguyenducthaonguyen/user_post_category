@@ -94,9 +94,7 @@ def token_log_service(db_session):
     return TokenLogService(db=db_session)
 
 
-def test_should_return_token_log_when_created_successfully(
-    token_log_service, sample_users, sample_token_logs
-):
+def test_should_return_token_log_when_created_successfully(token_log_service, sample_users, sample_token_logs):
     token_log = TokenLogCreate(
         user_id="user11",
         username="testuser11",
@@ -133,9 +131,7 @@ def test_should_return_true_when_is_suspicious(token_log_service):
         current_agent=token_log.user_agent,
         action=token_log.action,
     )
-    assert (
-        response is True
-    )  # Assuming the previous log was suspicious enough to trigger this
+    assert response is True  # Assuming the previous log was suspicious enough to trigger this
 
 
 def test_should_return_false_when_not_suspicious(token_log_service):
@@ -153,9 +149,7 @@ def test_should_return_false_when_not_suspicious(token_log_service):
         current_agent=token_log.user_agent,
         action=token_log.action,
     )
-    assert (
-        response is False
-    )  # Assuming the previous log was not suspicious enough to trigger this
+    assert response is False  # Assuming the previous log was not suspicious enough to trigger this
 
 
 def test_should_return_true_when_is_suspicious_for_refresh(token_log_service):
@@ -173,9 +167,7 @@ def test_should_return_true_when_is_suspicious_for_refresh(token_log_service):
         current_agent=token_log.user_agent,
         action=token_log.action,
     )
-    assert (
-        response is True
-    )  # Assuming the previous log was suspicious enough to trigger this
+    assert response is True  # Assuming the previous log was suspicious enough to trigger this
 
 
 def test_should_return_false_when_not_suspicious_for_refresh(token_log_service):
@@ -192,9 +184,7 @@ def test_should_return_false_when_not_suspicious_for_refresh(token_log_service):
         current_agent=token_log.user_agent,
         action=token_log.action,
     )
-    assert (
-        response is False
-    )  # Assuming the previous log was not suspicious enough to trigger this
+    assert response is False  # Assuming the previous log was not suspicious enough to trigger this
 
 
 def test_should_return_false_when_no_previous_log(token_log_service):

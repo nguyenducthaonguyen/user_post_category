@@ -17,30 +17,18 @@ class ActiveAccessTokenRepository:
         self.db.refresh(db_token)
         return db_token
 
-    def get_access_tokens_by_user_id(
-        self, user_id: str
-    ) -> list[type[ActiveAccessToken]]:
-        access_tokens = (
-            self.db.query(ActiveAccessToken).filter_by(user_id=user_id).all()
-        )
+    def get_access_tokens_by_user_id(self, user_id: str) -> list[type[ActiveAccessToken]]:
+        access_tokens = self.db.query(ActiveAccessToken).filter_by(user_id=user_id).all()
         return access_tokens
 
     def delete_token(self, token: str):
-        deleted_count = (
-            self.db.query(ActiveAccessToken)
-            .filter_by(access_token=token)
-            .delete(synchronize_session=False)
-        )
+        deleted_count = self.db.query(ActiveAccessToken).filter_by(access_token=token).delete(synchronize_session=False)
         self.db.commit()
         return deleted_count > 0
 
     def delete_tokens_by_user_id(self, user_id: str) -> bool:
         try:
-            deleted_count = (
-                self.db.query(ActiveAccessToken)
-                .filter_by(user_id=user_id)
-                .delete(synchronize_session=False)
-            )
+            deleted_count = self.db.query(ActiveAccessToken).filter_by(user_id=user_id).delete(synchronize_session=False)
             self.db.commit()
             return deleted_count > 0
         except Exception as e:
@@ -49,11 +37,7 @@ class ActiveAccessTokenRepository:
             return False
 
     def delete_expired_tokens(self):
-        expired_tokens = (
-            self.db.query(ActiveAccessToken)
-            .filter(ActiveAccessToken.expires_at < datetime.now(timezone.utc))
-            .all()
-        )
+        expired_tokens = self.db.query(ActiveAccessToken).filter(ActiveAccessToken.expires_at < datetime.now(timezone.utc)).all()
         for token in expired_tokens:
             self.db.delete(token)
         self.db.commit()

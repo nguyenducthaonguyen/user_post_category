@@ -37,11 +37,7 @@ class PostService:
         try:
             categories = []
             if post_data.category_ids:
-                categories = (
-                    self.db.query(Category)
-                    .filter(Category.id.in_(post_data.category_ids))
-                    .all()
-                )
+                categories = self.db.query(Category).filter(Category.id.in_(post_data.category_ids)).all()
                 found_ids = {str(category.id) for category in categories}
                 requested_ids = set(post_data.category_ids)
 
@@ -73,9 +69,7 @@ class PostService:
             posts = self.post_repo.get_posts_by_user_id(user_id)
             return posts
         except Exception as e:
-            raise HTTPException(
-                status_code=400, detail=f"Get posts by user failed: {e}"
-            )
+            raise HTTPException(status_code=400, detail=f"Get posts by user failed: {e}")
 
     def get_post_by_id(self, post_id: str) -> Post:
         """
@@ -110,17 +104,11 @@ class PostService:
                 content={
                     "status_code": 200,
                     "message": "Get Posts Successfully",
-                    "data": [
-                        PostRead.model_validate(post).model_dump() for post in posts
-                    ],
+                    "data": [PostRead.model_validate(post).model_dump() for post in posts],
                     "pagination": {"total": total, "limit": limit, "offset": skip},
                     "link": {
                         "self": f"http://127.0.0.1:8000/api/v1/posts?page={page}&limit={limit}&is_active={is_active}",
-                        "next": (
-                            f"http://127.0.0.1:8000/api/v1/posts?page={page + 1}&limit={limit}&is_active={is_active}"
-                            if page < last_page
-                            else None
-                        ),
+                        "next": (f"http://127.0.0.1:8000/api/v1/posts?page={page + 1}&limit={limit}&is_active={is_active}" if page < last_page else None),
                         "last": f"http://127.0.0.1:8000/api/v1/posts?page={last_page}&limit={limit}&is_active={is_active}",
                     },
                 },
@@ -143,11 +131,7 @@ class PostService:
             # Cập nhật thuộc tính ở đây
             categories = []
             if post_update.category_ids:
-                categories = (
-                    self.db.query(Category)
-                    .filter(Category.id.in_(post_update.category_ids))
-                    .all()
-                )
+                categories = self.db.query(Category).filter(Category.id.in_(post_update.category_ids)).all()
             post.title = post_update.title
             post.content = post_update.content
             post.categories = categories

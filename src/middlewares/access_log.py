@@ -15,12 +15,7 @@ class AccessLogMiddleware(BaseHTTPMiddleware):
         duration_ms = (time.time() - start) * 1000
 
         client_host = request.client.host if request.client else "unknown"
-        log_msg = (
-            f"{request.method} {request.url.path} "
-            f"status={response.status_code} "
-            f"duration={duration_ms:.2f}ms "
-            f"client={client_host}"
-        )
+        log_msg = f"{request.method} {request.url.path} " f"status={response.status_code} " f"duration={duration_ms:.2f}ms " f"client={client_host}"
         logger.info(log_msg)
 
         return response

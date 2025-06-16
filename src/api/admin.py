@@ -29,9 +29,7 @@ def list_users(
     page: int = Query(1, ge=1, description="Trang hiện tại"),
     limit: int = Query(10, ge=1, le=100, description="Số lượng/trang"),
     name: Optional[str] = Query(None),
-    is_active: Optional[bool] = Query(
-        None, description="Trạng thái người dùng: true = active, false = blocked"
-    ),
+    is_active: Optional[bool] = Query(None, description="Trạng thái người dùng: true = active, false = blocked"),
     role: Optional[RoleEnum] = Query(None, description="Vai trò của người dùng"),
     service: UserService = Depends(get_user_service),
 ):
@@ -63,9 +61,7 @@ def block_user(user_id: str, service: UserService = Depends(get_user_service)):
     Admin khóa tài khoản người dùng.
     """
     service.block_user_for_admin(user_id)
-    return JSONResponse(
-        status_code=200, content={"status_code": 200, "message": "block success"}
-    )
+    return JSONResponse(status_code=200, content={"status_code": 200, "message": "block success"})
 
 
 @router.patch("/users/{user_id}/unblock", response_model=StandardResponse)
@@ -74,9 +70,7 @@ def unblock_user(user_id: str, service: UserService = Depends(get_user_service))
     Admin mở khóa tài khoản người dùng.
     """
     service.unblock_user_for_admin(user_id)
-    return JSONResponse(
-        status_code=200, content={"status_code": 200, "message": "unblock success"}
-    )
+    return JSONResponse(status_code=200, content={"status_code": 200, "message": "unblock success"})
 
 
 @router.delete("/users/{user_id}", response_model=StandardResponse)
@@ -85,9 +79,7 @@ def delete_user(user_id: str, service: UserService = Depends(get_user_service)):
     Admin xóa người dùng cùng tất cả bài viết của họ.
     """
     service.delete_user(user_id)
-    return JSONResponse(
-        status_code=200, content={"status_code": 200, "message": "Deleted Successfully"}
-    )
+    return JSONResponse(status_code=200, content={"status_code": 200, "message": "Deleted Successfully"})
 
 
 @router.get("/token", response_model=StandardResponse)
@@ -98,8 +90,6 @@ def get_token_logs(token_service: TokenLogService = Depends(get_token_log_servic
         content={
             "status_code": 200,
             "message": "success",
-            "data": [
-                TokenLogResponse.model_validate(token).model_dump() for token in tokens
-            ],
+            "data": [TokenLogResponse.model_validate(token).model_dump() for token in tokens],
         },
     )

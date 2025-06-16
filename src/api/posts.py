@@ -65,9 +65,7 @@ def get_posts_by_user(user_id: str, service: PostService = Depends(get_post_serv
 
 
 @router.post("/", response_model=StandardResponse[PostRead])
-def create_post(
-    request: Request, post: PostCreate, service: PostService = Depends(get_post_service)
-):
+def create_post(request: Request, post: PostCreate, service: PostService = Depends(get_post_service)):
     current_user = request.state.user
     post = service.create_post(post, current_user.id)
     return JSONResponse(
@@ -109,9 +107,7 @@ def get_post(post_id: str, service: PostService = Depends(get_post_service)):
 
 
 @router.delete("/{post_id}", response_model=StandardResponse)
-def delete_post(
-    request: Request, post_id: str, service: PostService = Depends(get_post_service)
-):
+def delete_post(request: Request, post_id: str, service: PostService = Depends(get_post_service)):
     current_user = request.state.user
     service.delete_post(post_id, current_user.id)
     return JSONResponse(

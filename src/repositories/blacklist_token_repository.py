@@ -19,19 +19,10 @@ class BlacklistedTokenRepository:
 
     def is_blacklisted(self, token: str) -> bool:
         # Lọc đúng: filter nhận ColumnElement[bool]
-        return (
-            self.db.query(BlacklistedToken)
-            .filter(BlacklistedToken.token == token)
-            .first()
-            is not None
-        )
+        return self.db.query(BlacklistedToken).filter(BlacklistedToken.token == token).first() is not None
 
     def delete_expired_tokens(self, expire_before: datetime):
-        expired_tokens = (
-            self.db.query(BlacklistedToken)
-            .filter(BlacklistedToken.blacklisted_at < expire_before)
-            .all()
-        )
+        expired_tokens = self.db.query(BlacklistedToken).filter(BlacklistedToken.blacklisted_at < expire_before).all()
         for token in expired_tokens:
             self.db.delete(token)
         self.db.commit()

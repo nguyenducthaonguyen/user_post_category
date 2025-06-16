@@ -26,9 +26,7 @@ def get_categories(service: CategoryService = Depends(get_category_service)):
 
 
 @router.post("/", response_model=StandardResponse[CategoryRead])
-def create_category(
-    category: CategoryCreate, service: CategoryService = Depends(get_category_service)
-):
+def create_category(category: CategoryCreate, service: CategoryService = Depends(get_category_service)):
     category = service.create_category(category)
     return StandardResponse(
         status_code=status.HTTP_201_CREATED,
@@ -62,9 +60,7 @@ def update_category(
     response_model=StandardResponse[CategoryRead],
     responses={404: {"model": ErrorResponse, "description": "Not found"}},
 )
-def delete_category(
-    category_id: str, service: CategoryService = Depends(get_category_service)
-):
+def delete_category(category_id: str, service: CategoryService = Depends(get_category_service)):
     service.get_category_by_id(category_id)
     return StandardResponse(
         status_code=status.HTTP_200_OK,
@@ -78,9 +74,7 @@ def delete_category(
     response_model=StandardResponse[CategoryRead],
     responses={404: {"model": ErrorResponse, "description": "Not found"}},
 )
-def get_category(
-    category_id: str, service: CategoryService = Depends(get_category_service)
-):
+def get_category(category_id: str, service: CategoryService = Depends(get_category_service)):
     category = service.get_category_by_id(category_id)
     return StandardResponse(
         status_code=status.HTTP_200_OK,

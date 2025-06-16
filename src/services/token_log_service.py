@@ -17,9 +17,7 @@ class TokenLogService:
     def get_paginated(self, skip: int = 0, limit: int = 200):
         return self.repo.get_paginated(skip, limit)
 
-    def is_suspicious(
-        self, user_id: str, current_ip: str, current_agent: str, action: str
-    ) -> bool:
+    def is_suspicious(self, user_id: str, current_ip: str, current_agent: str, action: str) -> bool:
         """
         Kiểm tra nếu hành động hiện tại có dấu hiệu bất thường.
 
@@ -40,11 +38,7 @@ class TokenLogService:
         agent_changed = last_log.user_agent != current_agent
 
         # Đảm bảo last_log.timestamp là timezone-aware
-        last_timestamp = (
-            last_log.timestamp
-            if last_log.timestamp.tzinfo
-            else last_log.timestamp.replace(tzinfo=timezone.utc)
-        )
+        last_timestamp = last_log.timestamp if last_log.timestamp.tzinfo else last_log.timestamp.replace(tzinfo=timezone.utc)
         time_diff = datetime.now(timezone.utc) - last_timestamp
 
         if action == "login":
@@ -54,12 +48,8 @@ class TokenLogService:
         return False
 
     @staticmethod
-    def _is_login_suspicious(
-        ip_changed: bool, agent_changed: bool, time_diff: timedelta
-    ) -> bool:
-        if (
-            ip_changed or agent_changed
-        ) and time_diff.total_seconds() < settings.SUSPICIOUS_LOGIN_TIME_WINDOW:
+    def _is_login_suspicious(ip_changed: bool, agent_changed: bool, time_diff: timedelta) -> bool:
+        if (ip_changed or agent_changed) and time_diff.total_seconds() < settings.SUSPICIOUS_LOGIN_TIME_WINDOW:
             return True
         return False
 

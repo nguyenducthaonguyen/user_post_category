@@ -8,12 +8,7 @@ from src.cores import auth
 from src.models.enums import RoleEnum
 from src.models.users import User
 from src.repositories.user_repository import UserRepository
-from src.schemas.users import (
-    PasswordChangeRequest,
-    UserRead,
-    UserReadAdmin,
-    UserUpdateRequest,
-)
+from src.schemas.users import PasswordChangeRequest, UserRead, UserReadAdmin, UserUpdateRequest
 
 
 class UserService:
@@ -56,9 +51,7 @@ class UserService:
             raise HTTPException(status_code=400, detail="Old password is incorrect")
 
         if data.password != data.password_confirmation:
-            raise HTTPException(
-                status_code=422, detail="Password confirmation does not match"
-            )
+            raise HTTPException(status_code=422, detail="Password confirmation does not match")
 
         new_password_hash = auth.get_password_hash(data.password)
         self.repo.update_password(user, new_password_hash)
@@ -84,17 +77,11 @@ class UserService:
                 content={
                     "status_code": 200,
                     "message": "Get Users Successfully",
-                    "data": [
-                        UserRead.model_validate(user).model_dump() for user in users
-                    ],
+                    "data": [UserRead.model_validate(user).model_dump() for user in users],
                     "pagination": {"total": total, "limit": limit, "offset": skip},
                     "link": {
                         "self": f"http://127.0.0.1:8000/api/v1/users?page={page}&limit={limit}&is_active={is_active}",
-                        "next": (
-                            f"http://127.0.0.1:8000/api/v1/users?page={page + 1}&limit={limit}&is_active={is_active}"
-                            if page < last_page
-                            else None
-                        ),
+                        "next": (f"http://127.0.0.1:8000/api/v1/users?page={page + 1}&limit={limit}&is_active={is_active}" if page < last_page else None),
                         "last": f"http://127.0.0.1:8000/api/v1/users?page={last_page}&limit={limit}&is_active={is_active}",
                     },
                 },
@@ -151,9 +138,7 @@ class UserService:
         role: Optional[RoleEnum] = None,
     ):
         skip = (page - 1) * limit
-        users = self.repo.get_all(
-            skip=skip, limit=limit, name=name, is_active=is_active, role=role
-        )
+        users = self.repo.get_all(skip=skip, limit=limit, name=name, is_active=is_active, role=role)
         total = self.repo.count_users(name=name, is_active=is_active, role=role)
 
         last_page = (total - 1) // limit + 1
@@ -165,11 +150,7 @@ class UserService:
             "pagination": {"total": total, "limit": limit, "offset": skip},
             "link": {
                 "self": f"http://127.0.0.1:8000/api/v1/admin?page={page}&limit={limit}&name={name}&is_active={is_active}",
-                "next": (
-                    f"http://127.0.0.1:8000/api/v1/admin?page={page + 1}&limit={limit}&name={name}&is_active={is_active}"
-                    if page < last_page
-                    else None
-                ),
+                "next": (f"http://127.0.0.1:8000/api/v1/admin?page={page + 1}&limit={limit}&name={name}&is_active={is_active}" if page < last_page else None),
                 "last": f"http://127.0.0.1:8000/api/v1/admin?page={last_page}&limit={limit}&name={name}&is_active={is_active}",
             },
         }

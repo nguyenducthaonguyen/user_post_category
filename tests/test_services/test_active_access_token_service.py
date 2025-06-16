@@ -64,8 +64,7 @@ def sample_active_access_tokens(db_session):
             user_id="user4",
             access_token="token1",
             created_at=datetime.now(timezone.utc),
-            expires_at=datetime.now(timezone.utc)
-            + timedelta(minutes=30),  # Assuming this constant is defined in settings
+            expires_at=datetime.now(timezone.utc) + timedelta(minutes=30),  # Assuming this constant is defined in settings
         ),
         ActiveAccessToken(
             id=4,
@@ -109,9 +108,7 @@ def active_access_token_service(db_session):
     return ActiveAccessTokenService(db=db_session)
 
 
-def test_should_create_active_access_token_when_data_valid(
-    active_access_token_service, sample_users, sample_active_access_tokens
-):
+def test_should_create_active_access_token_when_data_valid(active_access_token_service, sample_users, sample_active_access_tokens):
 
     token_data = ActiveAccessTokenCreate(user_id="user4", access_token="new_token")
     response = active_access_token_service.create_token(token_data)
@@ -178,9 +175,7 @@ def test_should_raise_404_when_delete_tokens_by_user_id_not_found(
     assert exc_info.value.detail == "No tokens found for user"
 
 
-def test_should_raise_400_when_delete_tokens_by_user_id_failed(
-    active_access_token_service, mocker
-):
+def test_should_raise_400_when_delete_tokens_by_user_id_failed(active_access_token_service, mocker):
     # Mock the repository method to raise an exception
     mocker.patch.object(
         active_access_token_service.repo,

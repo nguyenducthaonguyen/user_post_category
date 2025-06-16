@@ -21,9 +21,7 @@ class AuthService:
             )
 
         if self.repo.get_user_by_email(str(user_data.email)):
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST, detail="Email already exists"
-            )
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Email already exists")
 
         user_data.password = auth.get_password_hash(user_data.password)
 

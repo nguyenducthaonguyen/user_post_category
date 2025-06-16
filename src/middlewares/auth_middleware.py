@@ -19,9 +19,7 @@ class AuthMiddleware(BaseHTTPMiddleware):
 
         auth_header = request.headers.get("Authorization")
         if not auth_header or not auth_header.startswith("Bearer "):
-            return self._unauthorized_response(
-                "Missing or invalid Authorization header", request.url.path
-            )
+            return self._unauthorized_response("Missing or invalid Authorization header", request.url.path)
 
         token = auth_header.split(" ")[1]
         db_generator = get_db()
@@ -30,9 +28,7 @@ class AuthMiddleware(BaseHTTPMiddleware):
         try:
             blacklist_service = BlacklistTokenService(db)
             if blacklist_service.is_token_blacklisted(token):
-                return self._unauthorized_response(
-                    "Token has been revoked", request.url.path
-                )
+                return self._unauthorized_response("Token has been revoked", request.url.path)
 
             user = validate_token_and_get_user(token, db)
             request.state.user = user  # gán full user object nếu cần
@@ -40,9 +36,7 @@ class AuthMiddleware(BaseHTTPMiddleware):
         except HTTPException as e:
             return self._error_response(e.status_code, e.detail, request.url.path)
         except Exception as e:
-            return self._error_response(
-                500, f"Internal Server Error: {e}", request.url.path
-            )
+            return self._error_response(500, f"Internal Server Error: {e}", request.url.path)
         finally:
             try:
                 db_generator.close()  # đảm bảo không rò rỉ session

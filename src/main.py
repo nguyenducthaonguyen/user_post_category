@@ -30,13 +30,9 @@ async def lifespan(app: FastAPI):
                 blacklist_service = BlacklistTokenService(db)
                 token_service = ActiveAccessTokenService(db)
                 token_usage_log = RateLimiterService(db)
-                blacklist_service.cleanup_expired_tokens(
-                    expire_minutes=settings.BLACKLIST_TOKEN_EXPIRE_MINUTES
-                )
+                blacklist_service.cleanup_expired_tokens(expire_minutes=settings.BLACKLIST_TOKEN_EXPIRE_MINUTES)
                 token_service.cleanup_expired_tokens()
-                token_usage_log.cleanup_expired_tokens(
-                    expire_minutes=settings.TOKEN_USAGE_LOG_EXPIRE_MINUTES
-                )
+                token_usage_log.cleanup_expired_tokens(expire_minutes=settings.TOKEN_USAGE_LOG_EXPIRE_MINUTES)
             finally:
                 try:
                     next(db_gen)

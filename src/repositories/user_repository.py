@@ -55,9 +55,7 @@ class UserRepository:
         user.is_active = True
         self._commit_and_refresh(user)
 
-    def list_users(
-        self, status: Optional[bool] = None, skip: int = 0, limit: int = 100
-    ) -> list[type[User]]:
+    def list_users(self, status: Optional[bool] = None, skip: int = 0, limit: int = 100) -> list[type[User]]:
         query = self.db.query(User)
         if status is not None:
             query = query.filter(User.is_active == status)
@@ -65,12 +63,8 @@ class UserRepository:
 
     def delete_user_and_posts(self, user: User):
         try:
-            self.db.query(Post).filter(Post.user_id == user.id).delete(
-                synchronize_session=False
-            )
-            self.db.query(SessionModels).filter(
-                SessionModels.user_id == user.id
-            ).delete(synchronize_session=False)
+            self.db.query(Post).filter(Post.user_id == user.id).delete(synchronize_session=False)
+            self.db.query(SessionModels).filter(SessionModels.user_id == user.id).delete(synchronize_session=False)
 
             self.db.delete(user)
             self.db.commit()

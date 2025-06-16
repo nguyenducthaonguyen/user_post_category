@@ -15,9 +15,7 @@ from src.cores.database import Base
 TEST_DATABASE_URL = os.getenv("DATABASE_URL")
 test_engine = create_engine(
     TEST_DATABASE_URL,
-    connect_args=(
-        {"check_same_thread": False} if TEST_DATABASE_URL.startswith("sqlite") else {}
-    ),
+    connect_args=({"check_same_thread": False} if TEST_DATABASE_URL.startswith("sqlite") else {}),
 )
 TestSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=test_engine)
 

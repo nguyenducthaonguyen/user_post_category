@@ -22,24 +22,18 @@ class CategoryService:
             return categories
         except Exception as e:
             # Custom trả về lỗi có field "content"
-            raise HTTPException(
-                status_code=400, detail=f"Failed to retrieve categories: {str(e)}"
-            )
+            raise HTTPException(status_code=400, detail=f"Failed to retrieve categories: {str(e)}")
 
     def create_category(self, category_in: CategoryCreate) -> CategoryRead:
         try:
             # Kiểm tra tên trùng nếu cần
             if self.repo.get_by_name(category_in.name):
-                raise HTTPException(
-                    status_code=400, detail="Category name already exists"
-                )
+                raise HTTPException(status_code=400, detail="Category name already exists")
             # Tạo mới
             new_category = self.repo.create(category_in)
             return new_category
         except Exception as e:
-            raise HTTPException(
-                status_code=400, detail=f"Failed to create category: {str(e)}"
-            )
+            raise HTTPException(status_code=400, detail=f"Failed to create category: {str(e)}")
 
     def update_category(self, category_id: str, category_in: CategoryUpdate):
         category = self.repo.get(category_id)
@@ -48,9 +42,7 @@ class CategoryService:
         # Check tên trùng nếu cần
         existing = self.repo.get_by_name(category_in.name)
         if existing and existing.id != category_id:
-            raise APIException(
-                error="loi", status_code=400, detail="Category name already exists"
-            )
+            raise APIException(error="loi", status_code=400, detail="Category name already exists")
         # Cập nhật
         for field, value in category_in.model_dump(exclude_unset=True).items():
             setattr(category, field, value)
@@ -60,9 +52,7 @@ class CategoryService:
             return category_data
         except Exception as e:
             self.repo.db.rollback()
-            raise HTTPException(
-                status_code=400, detail=f"Failed to update category: {str(e)}"
-            )
+            raise HTTPException(status_code=400, detail=f"Failed to update category: {str(e)}")
 
     def delete_category(self, category_id: str):
         category = self.repo.get(category_id)
@@ -73,6 +63,4 @@ class CategoryService:
             return category
         except Exception as e:
             self.repo.db.rollback()
-            raise HTTPException(
-                status_code=400, detail=f"Failed to delete category: {str(e)}"
-            )
+            raise HTTPException(status_code=400, detail=f"Failed to delete category: {str(e)}")

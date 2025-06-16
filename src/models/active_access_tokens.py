@@ -15,8 +15,7 @@ class ActiveAccessToken(Base):
     created_at = Column(DateTime, default=datetime.now(timezone.utc))
     expires_at = Column(
         DateTime,
-        default=lambda: datetime.now(timezone.utc)
-        + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES),
+        default=lambda: datetime.now(timezone.utc) + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES),
     )
 
     user = relationship("User", back_populates="active_access_tokens")

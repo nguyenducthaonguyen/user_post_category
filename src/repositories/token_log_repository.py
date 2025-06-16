@@ -35,9 +35,4 @@ class TokenLogRepository:
         Returns:
             TokenLog | None: Log mới nhất hoặc None nếu không có.
         """
-        return (
-            self.db.query(TokenLog)
-            .filter(TokenLog.user_id == user_id, TokenLog.action == action)
-            .order_by(TokenLog.timestamp.desc())
-            .first()
-        )
+        return self.db.query(TokenLog).filter(TokenLog.user_id == user_id, TokenLog.action == action).order_by(TokenLog.timestamp.desc()).first()

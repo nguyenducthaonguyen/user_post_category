@@ -87,9 +87,7 @@ def post_service(db_session):
     return PostService(db=db_session)
 
 
-def test_should_return_post_when_exists_and_active(
-    post_service, sample_users, sample_categories, sample_posts
-):
+def test_should_return_post_when_exists_and_active(post_service, sample_users, sample_categories, sample_posts):
     response = post_service.get_post_by_id("1")
     assert response.id == "1"
     assert response.title == "Post 1"
@@ -126,9 +124,7 @@ def test_should_return_all_posts_by_user_id(post_service):
 
 
 def test_should_return_post_when_created_successfully(post_service):
-    post_data = PostCreate(
-        title="New Post", content="This is a new post", category_ids=["3", "4"]
-    )
+    post_data = PostCreate(title="New Post", content="This is a new post", category_ids=["3", "4"])
     response = post_service.create_post(post_data, user_id="user1")
     assert response.title == "New Post"
     assert response.content == "This is a new post"
@@ -137,9 +133,7 @@ def test_should_return_post_when_created_successfully(post_service):
 
 
 def test_should_raise_error_when_create_post_with_invalid_user(post_service):
-    post_data = PostCreate(
-        title="New Post", content="This is a new post", category_ids=["3", "4"]
-    )
+    post_data = PostCreate(title="New Post", content="This is a new post", category_ids=["3", "4"])
     with pytest.raises(HTTPException) as exc_info:
         post_service.create_post(post_data, user_id="999")
     assert exc_info.value.status_code == 404
@@ -164,9 +158,7 @@ def test_should_return_categories_empty_when_create_create_post_without_categori
 def test_should_raise_400_when_create_post_failed(post_service, mocker):
     post_data = PostCreate(title="Any", content="Any", category_ids=["3"])
     # Giả lập post_repo.create raise Exception
-    mocker.patch.object(
-        post_service.post_repo, "create", side_effect=Exception("Mocked DB error")
-    )
+    mocker.patch.object(post_service.post_repo, "create", side_effect=Exception("Mocked DB error"))
 
     with pytest.raises(HTTPException) as exc_info:
         post_service.create_post(post_data, user_id="user1")
@@ -205,9 +197,7 @@ def test_should_return_200_when_get_all_posts_success(post_service):
 
 def test_should_return_400_when_get_all_posts_failed(post_service, mocker):
     # Giả lập post_repo.count_posts raise Exception
-    mocker.patch.object(
-        post_service.post_repo, "count_posts", side_effect=Exception("Mocked DB error")
-    )
+    mocker.patch.object(post_service.post_repo, "count_posts", side_effect=Exception("Mocked DB error"))
 
     with pytest.raises(HTTPException) as exc_info:
         post_service.get_all(page=1, limit=10)
@@ -217,9 +207,7 @@ def test_should_return_400_when_get_all_posts_failed(post_service, mocker):
 
 def test_should_return_post_when_updated_successfully(post_service):
 
-    post_data = PostUpdate(
-        title="Updated Post", content="This is an updated post", category_ids=["3"]
-    )
+    post_data = PostUpdate(title="Updated Post", content="This is an updated post", category_ids=["3"])
     response = post_service.update_post("1", post_data, user_id="user1")
     assert response.id == "1"
     assert response.title == "Updated Post"
@@ -228,9 +216,7 @@ def test_should_return_post_when_updated_successfully(post_service):
 
 
 def test_should_raise_404_when_update_post_not_found(post_service):
-    post_data = PostUpdate(
-        title="Updated Post", content="This is an updated post", category_ids=["3"]
-    )
+    post_data = PostUpdate(title="Updated Post", content="This is an updated post", category_ids=["3"])
     with pytest.raises(HTTPException) as exc_info:
         post_service.update_post("999", post_data, user_id="user1")
     assert exc_info.value.status_code == 404
@@ -238,9 +224,7 @@ def test_should_raise_404_when_update_post_not_found(post_service):
 
 
 def test_should_raise_403_when_update_post_not_owner(post_service):
-    post_data = PostUpdate(
-        title="Updated Post", content="This is an updated post", category_ids=["3"]
-    )
+    post_data = PostUpdate(title="Updated Post", content="This is an updated post", category_ids=["3"])
     with pytest.raises(HTTPException) as exc_info:
         post_service.update_post("1", post_data, user_id="user2")
     assert exc_info.value.status_code == 403
@@ -265,9 +249,7 @@ def test_should_return_categories_empty_when_update_post_without_categories(
 def test_should_raise_400_when_update_post_failed(post_service, mocker):
     post_data = PostUpdate(title="Any", content="Any", category_ids=["3"])
     # Giả lập post_repo.update raise Exception
-    mocker.patch.object(
-        post_service.post_repo, "update", side_effect=Exception("Mocked DB error")
-    )
+    mocker.patch.object(post_service.post_repo, "update", side_effect=Exception("Mocked DB error"))
 
     with pytest.raises(HTTPException) as exc_info:
         post_service.update_post("1", post_data, user_id="user1")
@@ -284,9 +266,7 @@ def test_should_return_post_when_deleted_successfully(post_service):
 
 def test_should_raise_400_when_delete_post_failed(post_service, mocker):
     # Giả lập post_repo.delete raise Exception
-    mocker.patch.object(
-        post_service.post_repo, "delete", side_effect=Exception("Mocked DB error")
-    )
+    mocker.patch.object(post_service.post_repo, "delete", side_effect=Exception("Mocked DB error"))
 
     with pytest.raises(HTTPException) as exc_info:
         post_service.delete_post("2", user_id="user2")

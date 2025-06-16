@@ -13,9 +13,7 @@ def validate_token_and_get_user(token: str, db: Session) -> Optional[User]:
         payload = auth.decode_token(token)
         username = payload.get("sub")
         if username is None:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token payload"
-            )
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token payload")
 
         user = db.query(User).filter(User.username == username).first()
         if not user or not user.is_active:
@@ -27,10 +25,6 @@ def validate_token_and_get_user(token: str, db: Session) -> Optional[User]:
         return user
 
     except ExpiredSignatureError:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail="Access token expired"
-        )
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Access token expired")
     except JWTError:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid or expired token"
-        )
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid or expired token")

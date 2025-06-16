@@ -25,9 +25,7 @@ def list_active_users(
 
 
 @router.get("/me", response_model=StandardResponse[UserRead])
-def get_current_user_info(
-    request: Request, service: UserService = Depends(get_user_service)
-):
+def get_current_user_info(request: Request, service: UserService = Depends(get_user_service)):
     current_user = request.state.user
     user = service.get_user_by_id(current_user.id)
     return JSONResponse(
@@ -81,9 +79,7 @@ def change_current_user_password(
 
 
 @router.delete("/me", response_model=StandardResponse)
-def deactivate_current_user(
-    request: Request, service: UserService = Depends(get_user_service)
-):
+def deactivate_current_user(request: Request, service: UserService = Depends(get_user_service)):
     current_user = request.state.user
     service.block_user(current_user.id)
     return JSONResponse(

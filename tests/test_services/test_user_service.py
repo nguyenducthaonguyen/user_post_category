@@ -129,9 +129,7 @@ def test_should_return_all_users_when_all_success(user_service, mock_users):
         assert user.email in emails
 
 
-def test_should_return_200_when_update_user_with_valid_data(
-    user_service, mocker, mock_users
-):
+def test_should_return_200_when_update_user_with_valid_data(user_service, mocker, mock_users):
     user = mock_users[0]
 
     updated_data = UserUpdateRequest(
@@ -151,9 +149,7 @@ def test_should_return_200_when_update_user_with_valid_data(
     assert response.email == "new_email@example.com"
 
 
-def test_should_raise_400_when_email_already_registered(
-    user_service, mocker, mock_users
-):
+def test_should_raise_400_when_email_already_registered(user_service, mocker, mock_users):
     user = mock_users[0]
 
     updated_data = UserUpdateRequest(
@@ -175,9 +171,7 @@ def test_should_raise_422_when_missing_email_field(mock_users):
         UserUpdateRequest(fullname="New Name", gender=user.gender)  # type: ignore
 
 
-def test_should_return_200_when_change_password_valid_data(
-    user_service, mocker, mock_users
-):
+def test_should_return_200_when_change_password_valid_data(user_service, mocker, mock_users):
     user = mock_users[0]
     data_change_password = PasswordChangeRequest(
         password_old="11223344",
@@ -189,9 +183,7 @@ def test_should_return_200_when_change_password_valid_data(
     # Patch verify_password trả về True
     mocker.patch(
         "src.cores.auth.verify_password",
-        return_value=auth.verify_password(
-            data_change_password.password_old, user.password
-        ),
+        return_value=auth.verify_password(data_change_password.password_old, user.password),
     )
     # Patch get_password_hash trả về giá trị hash giả
     mocker.patch("src.cores.auth.get_password_hash", return_value="hashed_new_password")
@@ -203,9 +195,7 @@ def test_should_return_200_when_change_password_valid_data(
     assert "Change password successfully" in response.body.decode()
 
 
-def test_should_return_400_when_change_password_password_old_fail(
-    user_service, mocker, mock_users
-):
+def test_should_return_400_when_change_password_password_old_fail(user_service, mocker, mock_users):
     user = mock_users[0]
     data_change_password = PasswordChangeRequest(
         password_old="1122334455",
@@ -217,9 +207,7 @@ def test_should_return_400_when_change_password_password_old_fail(
     # Patch verify_password trả về False để mô phỏng pass cũ sai
     mocker.patch(
         "src.cores.auth.verify_password",
-        return_value=auth.verify_password(
-            data_change_password.password_old, user.password
-        ),
+        return_value=auth.verify_password(data_change_password.password_old, user.password),
     )
     # Patch get_password_hash (không cần dùng ở đây)
     mocker.patch("src.cores.auth.get_password_hash", return_value="hashed_new_password")
@@ -232,9 +220,7 @@ def test_should_return_400_when_change_password_password_old_fail(
     assert "Old password is incorrect" in str(exc_info.value.detail)
 
 
-def test_should_return_400_when_change_password_password_confirmation_not_match(
-    user_service, mocker, mock_users
-):
+def test_should_return_400_when_change_password_password_confirmation_not_match(user_service, mocker, mock_users):
     user = mock_users[0]
     data_change_password = PasswordChangeRequest(
         password_old="11223344",
@@ -246,9 +232,7 @@ def test_should_return_400_when_change_password_password_confirmation_not_match(
     # Patch verify_password trả về False để mô phỏng pass cũ sai
     mocker.patch(
         "src.cores.auth.verify_password",
-        return_value=auth.verify_password(
-            data_change_password.password_old, user.password
-        ),
+        return_value=auth.verify_password(data_change_password.password_old, user.password),
     )
     # Patch get_password_hash (không cần dùng ở đây)
 
@@ -258,9 +242,7 @@ def test_should_return_400_when_change_password_password_confirmation_not_match(
     assert "Password confirmation does not match" in str(exc_info.value.detail)
 
 
-def test_should_return_200_when_block_user_is_active_true(
-    user_service, mocker, mock_users
-):
+def test_should_return_200_when_block_user_is_active_true(user_service, mocker, mock_users):
     user = mock_users[0]  # user này đang active
 
     # Patch repo.get trả về user đang active
@@ -285,9 +267,7 @@ def test_should_return_400_when_block_user_is_active_false(user_service, mock_us
     assert exc_info.value.detail == "User was already blocked"
 
 
-def test_should_return_200_when_unblock_user_is_active_false(
-    user_service, mocker, mock_users
-):
+def test_should_return_200_when_unblock_user_is_active_false(user_service, mocker, mock_users):
     user = mock_users[1]  # đang bị block
 
     mocker.patch.object(user_service.repo, "get", return_value=user)
@@ -295,9 +275,7 @@ def test_should_return_200_when_unblock_user_is_active_false(
     def fake_unblock_user(u):
         u.is_active = True
 
-    mocker.patch.object(
-        user_service.repo, "unblock_user", side_effect=fake_unblock_user
-    )
+    mocker.patch.object(user_service.repo, "unblock_user", side_effect=fake_unblock_user)
 
     response = user_service.unblock_user_for_admin(user.id)
 
@@ -333,9 +311,7 @@ def test_should_return_200_when_get_all_for_admin(user_service, mocker, mock_use
         assert user["is_active"] is not None
 
 
-def test_should_raise_404_when_user_unblock_for_admin_not_found(
-    user_service, mocker, mock_users
-):
+def test_should_raise_404_when_user_unblock_for_admin_not_found(user_service, mocker, mock_users):
     mocker.patch.object(user_service.repo, "get_all", return_value=None)
     with pytest.raises(HTTPException) as exc_info:
         user_service.unblock_user_for_admin("not-exist-id")
@@ -377,19 +353,13 @@ def test_should_raise_500_when_delete_user_fails(user_service, mocker, mock_user
 
 
 def test_should_return_500_when_get_all_user_fails(user_service, mocker):
-    mocker.patch.object(
-        user_service.repo, "get_all", side_effect=Exception("Database error")
-    )
-    mocker.patch.object(
-        user_service.repo, "count_users", side_effect=Exception("Database error")
-    )
+    mocker.patch.object(user_service.repo, "get_all", side_effect=Exception("Database error"))
+    mocker.patch.object(user_service.repo, "count_users", side_effect=Exception("Database error"))
 
     with pytest.raises(HTTPException) as exc_info:
         user_service.get_all(page=1, limit=10, is_active=True)
     assert exc_info.value.status_code == 500
-    assert "An error occurred while retrieving users: Database error" in str(
-        exc_info.value.detail
-    )
+    assert "An error occurred while retrieving users: Database error" in str(exc_info.value.detail)
 
 
 def test_should_return_user_when_block_user_for_user(user_service, mocker, mock_users):
@@ -409,9 +379,7 @@ def test_should_return_user_when_block_user_for_user(user_service, mocker, mock_
     assert response.is_active is False
 
 
-def test_should_raise_400_when_update_user_for_email_already_registered(
-    user_service, mock_users
-):
+def test_should_raise_400_when_update_user_for_email_already_registered(user_service, mock_users):
     # user hiện tại
     user = mock_users[0]
     user.id = "1"
