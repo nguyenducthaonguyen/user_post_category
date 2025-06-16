@@ -4,8 +4,7 @@ from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
 from src.models.active_access_tokens import ActiveAccessToken
-from src.repositories.active_access_token_repository import \
-    ActiveAccessTokenRepository
+from src.repositories.active_access_token_repository import ActiveAccessTokenRepository
 from src.schemas.active_access_tokens import ActiveAccessTokenCreate
 from src.schemas.response import MessageResponse
 
