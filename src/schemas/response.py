@@ -9,17 +9,19 @@ class PaginationSchema(BaseModel):
     limit: int
     offset: int
 
+
 class LinkSchema(BaseModel):
     self: HttpUrl
     next: Optional[HttpUrl] = None
     last: HttpUrl
 
 
-
 class MessageResponse(BaseModel):
     detail: str
 
+
 T = TypeVar("T")
+
 
 class StandardResponse(BaseModel, Generic[T]):
     status_code: int
@@ -31,6 +33,7 @@ class ErrorResponse(BaseModel):
     status_code: int
     error: str
     message: str
+
 
 class PaginatedResponse(BaseModel, Generic[T]):
     status_code: int

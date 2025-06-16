@@ -29,9 +29,11 @@ class RateLimiterRepository:
         ).delete()
 
         # Check nếu đã tồn tại rồi thì khỏi insert
-        exists = self.db.query(BlacklistedToken).filter(
-            BlacklistedToken.token == token
-        ).first()
+        exists = (
+            self.db.query(BlacklistedToken)
+            .filter(BlacklistedToken.token == token)
+            .first()
+        )
 
         if not exists:
             self.db.add(BlacklistedToken(token=token))

@@ -31,31 +31,36 @@ class PostService:
             raise HTTPException(status_code=403, detail="User is blocked")
         return user
 
-
     def create_post(self, post_data: PostCreate, user_id: str):
         self._get_user_and_check_status(user_id)
         try:
             categories = []
             if post_data.category_ids:
-                categories = self.db.query(Category).filter(Category.id.in_(post_data.category_ids)).all()
+                categories = (
+                    self.db.query(Category)
+                    .filter(Category.id.in_(post_data.category_ids))
+                    .all()
+                )
                 found_ids = {str(category.id) for category in categories}
                 requested_ids = set(post_data.category_ids)
 
                 missing_ids = requested_ids - found_ids
                 if missing_ids:
-                    raise HTTPException(status_code=400, detail=f"Invalid category IDs: {list(missing_ids)}")
+                    raise HTTPException(
+                        status_code=400,
+                        detail=f"Invalid category IDs: {list(missing_ids)}",
+                    )
 
             new_post = Post(
-            title=post_data.title,
-            content=post_data.content,
-            user_id=user_id,
+                title=post_data.title,
+                content=post_data.content,
+                user_id=user_id,
             )
             new_post.categories = categories
             data_post = self.post_repo.create(new_post)
             return data_post
         except Exception as e:
-            raise HTTPException (status_code=400, detail=f"Create post failed: {e}")
-
+            raise HTTPException(status_code=400, detail=f"Create post failed: {e}")
 
     def get_posts_by_user_id(self, user_id: str):
         """
@@ -67,8 +72,9 @@ class PostService:
             posts = self.post_repo.get_posts_by_user_id(user_id)
             return posts
         except Exception as e:
-           raise HTTPException(status_code=400, detail=f"Get posts by user failed: {e}")
-
+            raise HTTPException(
+                status_code=400, detail=f"Get posts by user failed: {e}"
+            )
 
     def get_post_by_id(self, post_id: str) -> Post:
         """
@@ -83,14 +89,12 @@ class PostService:
         self._get_user_and_check_status(post.user_id)
         return post
 
-
     def get_all(
-            self,
-            page: Optional[int] = 0,
-            limit: Optional[int] = 100,
-            is_active: Optional[bool] = None
-
-    ) :
+        self,
+        page: Optional[int] = 0,
+        limit: Optional[int] = 100,
+        is_active: Optional[bool] = None,
+    ):
         """
         Lấy tất cả bài post. Nếu is_active != None thì lọc theo trạng thái user.
         Có hỗ trợ phân trang.
@@ -98,29 +102,31 @@ class PostService:
         try:
             skip = (page - 1) * limit
             total = self.post_repo.count_posts(is_active)
-            posts = self.post_repo.get_all(skip,limit,is_active)
+            posts = self.post_repo.get_all(skip, limit, is_active)
             last_page = (total - 1) // limit + 1
             return JSONResponse(
                 status_code=200,
                 content={
                     "status_code": 200,
-                    "message":"Get Posts Successfully",
-                    "data": [PostRead.model_validate(post).model_dump() for post in posts],
-                    "pagination": {
-                        "total": total,
-                        "limit": limit,
-                        "offset": skip
-                    },
+                    "message": "Get Posts Successfully",
+                    "data": [
+                        PostRead.model_validate(post).model_dump() for post in posts
+                    ],
+                    "pagination": {"total": total, "limit": limit, "offset": skip},
                     "link": {
                         "self": f"http://127.0.0.1:8000/api/v1/posts?page={page}&limit={limit}&is_active={is_active}",
-                        "next": f"http://127.0.0.1:8000/api/v1/posts?page={page + 1}&limit={limit}&is_active={is_active}" if page < last_page else None,
-                        "last": f"http://127.0.0.1:8000/api/v1/posts?page={last_page}&limit={limit}&is_active={is_active}"
-                    }
-                }
+                        "next": (
+                            f"http://127.0.0.1:8000/api/v1/posts?page={page + 1}&limit={limit}&is_active={is_active}"
+                            if page < last_page
+                            else None
+                        ),
+                        "last": f"http://127.0.0.1:8000/api/v1/posts?page={last_page}&limit={limit}&is_active={is_active}",
+                    },
+                },
             )
 
         except Exception as e:
-            raise HTTPException( status_code=400, detail=f"Get posts failed: {e}")
+            raise HTTPException(status_code=400, detail=f"Get posts failed: {e}")
 
     def _get_post_and_check_owner(self, post_id: str, user_id: str):
         post = self.post_repo.get(post_id)
@@ -133,10 +139,14 @@ class PostService:
     def update_post(self, post_id: str, post_update: PostUpdate, user_id: str):
         post = self._get_post_and_check_owner(post_id, user_id)
         try:
-        # Cập nhật thuộc tính ở đây
+            # Cập nhật thuộc tính ở đây
             categories = []
             if post_update.category_ids:
-                categories = self.db.query(Category).filter(Category.id.in_(post_update.category_ids)).all()
+                categories = (
+                    self.db.query(Category)
+                    .filter(Category.id.in_(post_update.category_ids))
+                    .all()
+                )
             post.title = post_update.title
             post.content = post_update.content
             post.categories = categories

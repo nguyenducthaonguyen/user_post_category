@@ -1,12 +1,14 @@
 from pydantic import BaseModel, ConfigDict
 from datetime import datetime
 
+
 class SessionCreate(BaseModel):
     user_id: str
     refresh_token: str
     ip_address: str
     user_agent: str
     expires_at: datetime
+
 
 class SessionRead(BaseModel):
     id: int
@@ -19,4 +21,3 @@ class SessionRead(BaseModel):
     revoked: bool
 
     model_config = ConfigDict(from_attributes=True)
-

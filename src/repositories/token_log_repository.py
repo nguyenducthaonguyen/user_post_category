@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from src.models.token_logs import TokenLog
 from src.schemas.token_log import TokenLogCreate
 
+
 class TokenLogRepository:
     def __init__(self, db: Session):
         self.db = db
@@ -16,7 +17,7 @@ class TokenLogRepository:
             username=log.username,
             ip_address=log.ip_address,
             user_agent=log.user_agent,
-            action=log.action
+            action=log.action,
         )
         self.db.add(db_log)
         self.db.commit()
@@ -25,7 +26,6 @@ class TokenLogRepository:
 
     def get_paginated(self, skip: int, limit: int) -> list[type[TokenLog]]:
         return self.db.query(TokenLog).offset(skip).limit(limit).all()
-
 
     def get_last_log(self, user_id: str, action: str) -> Optional[TokenLog]:
         """

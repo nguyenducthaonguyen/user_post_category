@@ -5,6 +5,7 @@ from src.cores.database import Base
 from src.models.base import BaseMixin
 from src.models.post_category import post_category
 
+
 class Category(BaseMixin, Base):
     __tablename__ = "categories"
 

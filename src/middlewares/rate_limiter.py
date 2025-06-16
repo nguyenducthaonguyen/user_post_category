@@ -29,7 +29,9 @@ class RateLimiterMiddleware(BaseHTTPMiddleware):
             if limiter.is_rate_limited(token, self.max_requests, self.period_seconds):
                 limiter.blacklist_token(token)
                 return JSONResponse(
-                    content={"message": "Too many requests, token has been blacklisted."},
+                    content={
+                        "message": "Too many requests, token has been blacklisted."
+                    },
                     status_code=status.HTTP_429_TOO_MANY_REQUESTS,
                 )
 
@@ -39,7 +41,7 @@ class RateLimiterMiddleware(BaseHTTPMiddleware):
             # Log và trả lỗi rõ ràng thay vì để 500 propagate
             return JSONResponse(
                 content={"detail": f"Internal middleware error: {str(e)}"},
-                status_code=500
+                status_code=500,
             )
         finally:
             db.close()

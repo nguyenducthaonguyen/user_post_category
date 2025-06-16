@@ -9,6 +9,7 @@ from src.models.users import User
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 
+
 def get_db():
     db = SessionLocal()
     try:
@@ -16,7 +17,10 @@ def get_db():
     finally:
         db.close()
 
-def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)) -> User:
+
+def get_current_user(
+    token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)
+) -> User:
     return validate_token_and_get_user(token, db)
 
 
@@ -25,4 +29,5 @@ def require_roles(*roles: RoleEnum):
         if user.role not in roles:
             raise HTTPException(status_code=403, detail="Forbidden")
         return user
+
     return role_dependency

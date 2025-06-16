@@ -31,9 +31,13 @@ async def lifespan(app: FastAPI):
                 blacklist_service = BlacklistTokenService(db)
                 token_service = ActiveAccessTokenService(db)
                 token_usage_log = RateLimiterService(db)
-                blacklist_service.cleanup_expired_tokens(expire_minutes=settings.BLACKLIST_TOKEN_EXPIRE_MINUTES)
+                blacklist_service.cleanup_expired_tokens(
+                    expire_minutes=settings.BLACKLIST_TOKEN_EXPIRE_MINUTES
+                )
                 token_service.cleanup_expired_tokens()
-                token_usage_log.cleanup_expired_tokens(expire_minutes=settings.TOKEN_USAGE_LOG_EXPIRE_MINUTES)
+                token_usage_log.cleanup_expired_tokens(
+                    expire_minutes=settings.TOKEN_USAGE_LOG_EXPIRE_MINUTES
+                )
             finally:
                 try:
                     next(db_gen)
@@ -52,8 +56,11 @@ app = FastAPI(title="FastAPI Security 5", lifespan=lifespan)
 # Thêm middleware
 app.add_middleware(AccessLogMiddleware)
 app.add_middleware(AuthMiddleware)
-app.add_middleware(RateLimiterMiddleware, max_requests=settings.RATE_LIMIT_MAX_REQUESTS,
-    period_seconds=settings.RATE_LIMIT_PERIOD_SECONDS)
+app.add_middleware(
+    RateLimiterMiddleware,
+    max_requests=settings.RATE_LIMIT_MAX_REQUESTS,
+    period_seconds=settings.RATE_LIMIT_PERIOD_SECONDS,
+)
 
 # Đăng ký router
 app.include_router(api_router, prefix="/api/v1")
@@ -66,11 +73,14 @@ Base.metadata.create_all(bind=engine)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
     return JSONResponse(
         status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-        content=jsonable_encoder({
-            "status_code": status.HTTP_422_UNPROCESSABLE_ENTITY,
-            "error": "Validation Error",
-            "detail": exc.errors(),
-            "body": exc.body}),
+        content=jsonable_encoder(
+            {
+                "status_code": status.HTTP_422_UNPROCESSABLE_ENTITY,
+                "error": "Validation Error",
+                "detail": exc.errors(),
+                "body": exc.body,
+            }
+        ),
     )
 
 
@@ -81,9 +91,10 @@ async def custom_http_exception_handler(request: Request, exc: HTTPException):
         content={
             "status_code": exc.status_code,
             "error": exc.detail,
-            "message": exc.detail
-        }
+            "message": exc.detail,
+        },
     )
+
 
 @app.exception_handler(APIException)
 async def api_exception_handler(request: Request, exc: APIException):
@@ -95,4 +106,3 @@ async def api_exception_handler(request: Request, exc: APIException):
             "message": exc.detail,
         },
     )
-

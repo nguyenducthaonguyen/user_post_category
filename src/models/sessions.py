@@ -3,6 +3,7 @@ from sqlalchemy.orm import relationship
 from datetime import datetime, timezone
 from src.cores.database import Base
 
+
 class Session(Base):
     __tablename__ = "sessions"
 

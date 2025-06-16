@@ -15,7 +15,7 @@ class ActiveAccessTokenService:
     def create_token(self, token_create: ActiveAccessTokenCreate) -> ActiveAccessToken:
         return self.repo.add(token_create)
 
-    def get_tokens_by_user_id(self, user_id: str) :
+    def get_tokens_by_user_id(self, user_id: str):
         return self.repo.get_access_tokens_by_user_id(user_id)
 
     from fastapi import HTTPException

@@ -21,4 +21,3 @@ class User(BaseMixin, Base):
     posts = relationship("Post", back_populates="user")
     active_access_tokens = relationship("ActiveAccessToken", back_populates="user")
     sessions = relationship("Session", back_populates="user")
-

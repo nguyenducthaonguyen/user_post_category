@@ -29,11 +29,7 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
     # Kiểm tra username và email đã tồn tại chưa
     auth_service = AuthService(db)
     new_user = auth_service.register_user(user)
-    return {
-        "status_code": 200,
-        "message": "Success",
-        "data": new_user
-    }
+    return {"status_code": 200, "message": "Success", "data": new_user}
 
 
 @router.post("/login", response_model=StandardResponse[TokenResponse])
@@ -43,8 +39,12 @@ def login(
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db),
 ):
-    user_current: Optional[User] = db.query(User).filter(User.username == form_data.username).first()
-    if not user_current or not auth.verify_password(form_data.password, user_current.password):
+    user_current: Optional[User] = (
+        db.query(User).filter(User.username == form_data.username).first()
+    )
+    if not user_current or not auth.verify_password(
+        form_data.password, user_current.password
+    ):
         if user_current:
             safe_log_token_action(db, user_current, "login failed", request)
         raise HTTPException(status_code=401, detail="Invalid credentials")
@@ -53,8 +53,12 @@ def login(
         raise HTTPException(status_code=401, detail="User blocked")
 
     # Tạo access token và refresh token
-    access_token = auth.create_access_token(username=str(user_current.username), role=user_current.role)
-    generated_refresh_token = auth.create_refresh_token(username=str(user_current.username), role=user_current.role)
+    access_token = auth.create_access_token(
+        username=str(user_current.username), role=user_current.role
+    )
+    generated_refresh_token = auth.create_refresh_token(
+        username=str(user_current.username), role=user_current.role
+    )
 
     # Lưu access token vào DB
     save_access_token(db, access_token, user_current.id)
@@ -76,21 +80,23 @@ def login(
         "status_code": 200,
         "message": "Success",
         "data": {
-                    "access_token": access_token,
-                    "token_type": "bearer",
-                    "expires_in": settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
-                    "id": user_current.id,
-                    "username": user_current.username,
-                    "role": user_current.role
-                }
+            "access_token": access_token,
+            "token_type": "bearer",
+            "expires_in": settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
+            "id": user_current.id,
+            "username": user_current.username,
+            "role": user_current.role,
+        },
     }
 
 
 @router.post("/refresh", response_model=StandardResponse[TokenResponse])
-def refresh_token(request: Request,  db: Session = Depends(get_db)):
+def refresh_token(request: Request, db: Session = Depends(get_db)):
     generated_refresh_token = request.cookies.get("refresh_token")
     if not generated_refresh_token:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Refresh token missing")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Refresh token missing"
+        )
 
     username = decode_refresh_token_or_raise(generated_refresh_token)
     print(username)
@@ -104,7 +110,9 @@ def refresh_token(request: Request,  db: Session = Depends(get_db)):
     validate_refresh_session_or_raise(db, generated_refresh_token)
 
     # Xoá refresh token cũ khỏi session
-    new_access_token = auth.create_access_token(username=str(user.username), role=user.role)
+    new_access_token = auth.create_access_token(
+        username=str(user.username), role=user.role
+    )
     save_access_token(db, new_access_token, user.id)
     safe_log_token_action(db, user, "refresh", request)
     # Trả token mới (client dùng để gọi API)
@@ -112,13 +120,13 @@ def refresh_token(request: Request,  db: Session = Depends(get_db)):
         "status_code": 200,
         "message": "Success",
         "data": {
-                    "access_token": new_access_token,
-                    "token_type": "bearer",
-                    "expires_in": settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
-                    "id": user.id,
-                    "username": user.username,
-                    "role": user.role
-                }
+            "access_token": new_access_token,
+            "token_type": "bearer",
+            "expires_in": settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
+            "id": user.id,
+            "username": user.username,
+            "role": user.role,
+        },
     }
 
 
@@ -143,9 +151,7 @@ def logout(request: Request, response: Response, db: Session = Depends(get_db)):
     if not success:
         raise HTTPException(status_code=400, detail="Session not found")
 
-    return {
-        "status_code": 200,
-        "message": "Logged out successfully"}
+    return {"status_code": 200, "message": "Logged out successfully"}
 
 
 @router.post("/logout-all")
@@ -170,9 +176,7 @@ def logout_all(
     token_service.delete_tokens_by_user_id(user.id)
 
     response.delete_cookie("refresh_token")
-    return {
-        "status_code": 200,
-        "message": "Logged out from all sessions"}
+    return {"status_code": 200, "message": "Logged out from all sessions"}
 
 
 # --- Helper functions ---
@@ -198,14 +202,16 @@ def log_token_action(db: Session, user: User, action: str, request: Request):
     )
     log_service.log_token_request(log_data)
 
-
     if log_service.is_suspicious(user.id, ip, agent, action):
-        suspicious_log = TokenLogCreate(**{**log_data.model_dump(), "action": f"suspicious {action}"})
+        suspicious_log = TokenLogCreate(
+            **{**log_data.model_dump(), "action": f"suspicious {action}"}
+        )
         log_service.log_token_request(suspicious_log)
 
 
-
-def log_session(db: Session, generated_refresh_token: str, request: Request, user: User):
+def log_session(
+    db: Session, generated_refresh_token: str, request: Request, user: User
+):
     session_service = SessionService(db)
     session_data = SessionCreate(
         user_id=user.id,

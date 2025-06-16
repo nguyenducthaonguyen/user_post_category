@@ -12,6 +12,4 @@ class TokenUsageLog(Base):
     token = Column(String(500), nullable=False, index=True)
     requested_at = Column(DateTime, default=datetime.now(timezone.utc))
 
-    __table_args__ = (
-        Index("idx_token_time", "token", "requested_at"),
-    )
+    __table_args__ = (Index("idx_token_time", "token", "requested_at"),)

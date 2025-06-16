@@ -5,6 +5,7 @@ from src.repositories.session_repository import SessionRepository
 from src.schemas.session import SessionCreate
 from src.models.sessions import Session as SessionModel
 
+
 class SessionService:
     def __init__(self, db: Session):
         self.repo = SessionRepository(db)
@@ -32,7 +33,6 @@ class SessionService:
             self.repo.revoke_session(session)
             return True
         return False
-
 
     def revoke_all_sessions(self, user_id: str):
         self.repo.revoke_all_sessions(user_id)

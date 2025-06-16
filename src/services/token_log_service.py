@@ -7,6 +7,7 @@ from src.cores.config import settings
 from src.schemas.token_log import TokenLogCreate, TokenLogResponse
 from src.repositories.token_log_repository import TokenLogRepository
 
+
 class TokenLogService:
     def __init__(self, db: Session):
         self.repo = TokenLogRepository(db)
@@ -14,15 +15,11 @@ class TokenLogService:
     def log_token_request(self, log_create: TokenLogCreate):
         return self.repo.create(log_create)
 
-    def get_paginated (self, skip: int = 0, limit: int = 200):
+    def get_paginated(self, skip: int = 0, limit: int = 200):
         return self.repo.get_paginated(skip, limit)
 
     def is_suspicious(
-            self,
-            user_id: str,
-            current_ip: str,
-            current_agent: str,
-            action: str
+        self, user_id: str, current_ip: str, current_agent: str, action: str
     ) -> bool:
         """
         Kiểm tra nếu hành động hiện tại có dấu hiệu bất thường.
@@ -57,9 +54,12 @@ class TokenLogService:
             return self._is_refresh_suspicious(time_diff)
         return False
 
-
-    def _is_login_suspicious(self, ip_changed: bool, agent_changed: bool, time_diff: timedelta) -> bool:
-        if (ip_changed or agent_changed) and time_diff.total_seconds() < settings.SUSPICIOUS_LOGIN_TIME_WINDOW:
+    def _is_login_suspicious(
+        self, ip_changed: bool, agent_changed: bool, time_diff: timedelta
+    ) -> bool:
+        if (
+            ip_changed or agent_changed
+        ) and time_diff.total_seconds() < settings.SUSPICIOUS_LOGIN_TIME_WINDOW:
             return True
         return False
 

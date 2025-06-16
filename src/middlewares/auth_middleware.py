@@ -8,11 +8,7 @@ from src.services.blacklist_token_service import BlacklistTokenService
 from src.cores.utils import validate_token_and_get_user
 from datetime import datetime, timezone
 
-EXCLUDE_PATHS = [
-    "/api/v1/auth/login",
-    "/api/v1/auth/register",
-    "/api/v1/auth/refresh"
-]
+EXCLUDE_PATHS = ["/api/v1/auth/login", "/api/v1/auth/register", "/api/v1/auth/refresh"]
 
 
 class AuthMiddleware(BaseHTTPMiddleware):
@@ -23,8 +19,7 @@ class AuthMiddleware(BaseHTTPMiddleware):
         auth_header = request.headers.get("Authorization")
         if not auth_header or not auth_header.startswith("Bearer "):
             return self._unauthorized_response(
-                "Missing or invalid Authorization header",
-                request.url.path
+                "Missing or invalid Authorization header", request.url.path
             )
 
         token = auth_header.split(" ")[1]
@@ -34,7 +29,9 @@ class AuthMiddleware(BaseHTTPMiddleware):
         try:
             blacklist_service = BlacklistTokenService(db)
             if blacklist_service.is_token_blacklisted(token):
-                return self._unauthorized_response("Token has been revoked", request.url.path)
+                return self._unauthorized_response(
+                    "Token has been revoked", request.url.path
+                )
 
             user = validate_token_and_get_user(token, db)
             request.state.user = user  # gán full user object nếu cần
@@ -59,7 +56,7 @@ class AuthMiddleware(BaseHTTPMiddleware):
                 "error": HTTPStatus(status_code).phrase,
                 "message": message,
                 "path": path,
-                "timestamp": datetime.now(timezone.utc).isoformat()
+                "timestamp": datetime.now(timezone.utc).isoformat(),
             },
         )
 

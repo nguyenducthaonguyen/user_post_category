@@ -5,6 +5,7 @@ from src.cores.logger import get_logger
 
 logger = get_logger("access")
 
+
 class AccessLogMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
         start = time.time()

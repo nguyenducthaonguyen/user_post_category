@@ -30,9 +30,11 @@ def list_users(
     page: int = Query(1, ge=1, description="Trang hiện tại"),
     limit: int = Query(10, ge=1, le=100, description="Số lượng/trang"),
     name: Optional[str] = Query(None),
-    is_active: Optional[bool] = Query(None, description="Trạng thái người dùng: true = active, false = blocked"),
+    is_active: Optional[bool] = Query(
+        None, description="Trạng thái người dùng: true = active, false = blocked"
+    ),
     role: Optional[RoleEnum] = Query(None, description="Vai trò của người dùng"),
-    service: UserService = Depends(get_user_service)
+    service: UserService = Depends(get_user_service),
 ):
     """
     Lấy danh sách người dùng theo trạng thái.
@@ -49,10 +51,10 @@ def get_user(user_id: str, service: UserService = Depends(get_user_service)):
     return JSONResponse(
         status_code=200,
         content={
-            "status_code":200,
+            "status_code": 200,
             "message": "Get user successfully",
-            "data": [UserReadAdmin.model_validate(data_user).model_dump()]
-        }
+            "data": [UserReadAdmin.model_validate(data_user).model_dump()],
+        },
     )
 
 
@@ -63,11 +65,7 @@ def block_user(user_id: str, service: UserService = Depends(get_user_service)):
     """
     service.block_user_for_admin(user_id)
     return JSONResponse(
-        status_code=200,
-        content={
-            "status_code":200,
-            "message": "block success"
-        }
+        status_code=200, content={"status_code": 200, "message": "block success"}
     )
 
 
@@ -78,11 +76,7 @@ def unblock_user(user_id: str, service: UserService = Depends(get_user_service))
     """
     service.unblock_user_for_admin(user_id)
     return JSONResponse(
-        status_code=200,
-        content={
-            "status_code":200,
-            "message": "unblock success"
-        }
+        status_code=200, content={"status_code": 200, "message": "unblock success"}
     )
 
 
@@ -93,22 +87,20 @@ def delete_user(user_id: str, service: UserService = Depends(get_user_service)):
     """
     service.delete_user(user_id)
     return JSONResponse(
-        status_code=200,
-        content={
-            "status_code":200,
-            "message": "Deleted Successfully"
-        }
+        status_code=200, content={"status_code": 200, "message": "Deleted Successfully"}
     )
 
 
 @router.get("/token", response_model=StandardResponse)
 def get_token_logs(token_service: TokenLogService = Depends(get_token_log_service)):
-    tokens= token_service.get_paginated()
+    tokens = token_service.get_paginated()
     return ORJSONResponse(
         status_code=200,
         content={
-            "status_code":200,
+            "status_code": 200,
             "message": "success",
-            "data": [TokenLogResponse.model_validate(token).model_dump() for token in tokens]
-        }
+            "data": [
+                TokenLogResponse.model_validate(token).model_dump() for token in tokens
+            ],
+        },
     )

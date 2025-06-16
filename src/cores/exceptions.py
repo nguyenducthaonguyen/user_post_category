@@ -11,6 +11,3 @@ class APIException(HTTPException):
         """
         self.error = error
         super().__init__(**kwargs)
-
-
-

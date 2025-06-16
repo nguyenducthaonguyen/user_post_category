@@ -18,11 +18,15 @@ class ActiveAccessTokenRepository:
         self.db.refresh(db_token)
         return db_token
 
-    def get_access_tokens_by_user_id(self, user_id: str) -> list[type[ActiveAccessToken]]:
-        access_tokens = self.db.query(ActiveAccessToken).filter_by(user_id=user_id).all()
+    def get_access_tokens_by_user_id(
+        self, user_id: str
+    ) -> list[type[ActiveAccessToken]]:
+        access_tokens = (
+            self.db.query(ActiveAccessToken).filter_by(user_id=user_id).all()
+        )
         return access_tokens
 
-    def delete_token(self, token: str) :
+    def delete_token(self, token: str):
         deleted_count = (
             self.db.query(ActiveAccessToken)
             .filter_by(access_token=token)
@@ -30,8 +34,6 @@ class ActiveAccessTokenRepository:
         )
         self.db.commit()
         return deleted_count > 0
-
-
 
     def delete_tokens_by_user_id(self, user_id: str) -> bool:
         try:
@@ -57,5 +59,3 @@ class ActiveAccessTokenRepository:
             self.db.delete(token)
         self.db.commit()
         return len(expired_tokens)
-
-

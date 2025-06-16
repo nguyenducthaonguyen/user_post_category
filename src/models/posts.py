@@ -14,6 +14,6 @@ class Post(BaseMixin, Base):
     user_id = Column(String(36), ForeignKey("users.id"))
     user = relationship("User", back_populates="posts")
 
-    categories = relationship("Category", secondary=post_category, back_populates="posts")
-
-
+    categories = relationship(
+        "Category", secondary=post_category, back_populates="posts"
+    )

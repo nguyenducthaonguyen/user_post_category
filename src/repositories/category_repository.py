@@ -1,8 +1,8 @@
-
 from sqlalchemy.orm import Session
 
 from src.models.categories import Category
 from src.schemas.categories import CategoryCreate
+
 
 class CategoryRepository:
     def __init__(self, db: Session):
@@ -42,5 +42,3 @@ class CategoryRepository:
 
     def get_by_name(self, name: str):
         return self.db.query(Category).filter(Category.name == name).first()
-
-

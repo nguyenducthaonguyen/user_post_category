@@ -13,7 +13,6 @@ class PostRepository:
         """
         self.db = db
 
-
     def get(self, post_id: str) -> Optional[Post]:
         """
         Lấy bài post theo post_id.
@@ -48,7 +47,6 @@ class PostRepository:
             query = query.join(User).filter(User.is_active == is_active)
         return query.count()
 
-
     def update(self, post: Post) -> Post:
         """
         Commit và refresh post đã được cập nhật thuộc tính bên ngoài.
@@ -56,7 +54,6 @@ class PostRepository:
         self.db.commit()
         self.db.refresh(post)
         return post
-
 
     def delete(self, post: Post):
         """

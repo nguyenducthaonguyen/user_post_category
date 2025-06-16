@@ -53,7 +53,9 @@ class UserRepository:
         user.is_active = True
         self._commit_and_refresh(user)
 
-    def list_users(self, status: Optional[bool] = None, skip: int = 0, limit: int = 100) -> list[type[User]]:
+    def list_users(
+        self, status: Optional[bool] = None, skip: int = 0, limit: int = 100
+    ) -> list[type[User]]:
         query = self.db.query(User)
         if status is not None:
             query = query.filter(User.is_active == status)
@@ -61,8 +63,12 @@ class UserRepository:
 
     def delete_user_and_posts(self, user: User):
         try:
-            self.db.query(Post).filter(Post.user_id == user.id).delete(synchronize_session=False)
-            self.db.query(SessionModels).filter(SessionModels.user_id == user.id).delete(synchronize_session=False)
+            self.db.query(Post).filter(Post.user_id == user.id).delete(
+                synchronize_session=False
+            )
+            self.db.query(SessionModels).filter(
+                SessionModels.user_id == user.id
+            ).delete(synchronize_session=False)
 
             self.db.delete(user)
             self.db.commit()
@@ -70,7 +76,13 @@ class UserRepository:
             self.db.rollback()
             raise e
 
-    def _filter_by_name_and_status(self, query, name: Optional[str], is_active: Optional[bool], role: Optional[RoleEnum]):
+    def _filter_by_name_and_status(
+        self,
+        query,
+        name: Optional[str],
+        is_active: Optional[bool],
+        role: Optional[RoleEnum],
+    ):
         if name:
             query = query.filter(User.fullname.ilike(f"%{name}%"))
         if is_active is not None:
@@ -80,18 +92,23 @@ class UserRepository:
         return query
 
     def get_all(
-            self,
-            skip: int = 0,
-            limit: int = 100,
-            name: Optional[str] = None,
-            is_active: Optional[bool] = None,
-            role: Optional[RoleEnum] = None
+        self,
+        skip: int = 0,
+        limit: int = 100,
+        name: Optional[str] = None,
+        is_active: Optional[bool] = None,
+        role: Optional[RoleEnum] = None,
     ) -> List[User]:
         query = self.db.query(User).options(joinedload(User.posts))
         query = self._filter_by_name_and_status(query, name, is_active, role)
         return query.offset(skip).limit(limit).all()
 
-    def count_users(self, name: Optional[str] = None, is_active: Optional[bool] = None, role: Optional[RoleEnum] = None) -> int:
+    def count_users(
+        self,
+        name: Optional[str] = None,
+        is_active: Optional[bool] = None,
+        role: Optional[RoleEnum] = None,
+    ) -> int:
         query = self.db.query(func.count(User.id))
         query = self._filter_by_name_and_status(query, name, is_active, role)
         return query.scalar()
