@@ -54,6 +54,6 @@ jobs:
 
       - name: Run tests with coverage
         env:
-          DATABASE_URL: mysql+pymysql://root:Nguyen%401997@127.0.0.1:3306/test_user_post
+          DATABASE_URL: mysql+pymysql://root:Nguyen%401997@127.0.0.1:3308/test_user_post
         run: |
           pytest --cov=.
