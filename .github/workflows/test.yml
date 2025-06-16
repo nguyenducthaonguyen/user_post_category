@@ -14,12 +14,11 @@ jobs:
       mysql:
         image: mysql:8
         env:
-          MYSQL_ROOT_PASSWORD: Nguyen@1997
+          MYSQL_ROOT_PASSWORD: "Nguyen@1997"
           MYSQL_DATABASE: test_user_post
-          MYSQL_USER: root
-          MYSQL_PASSWORD: Nguyen@1997
+
         ports:
-          - 3306:3306
+          - 3308:3306
         options: >-
           --health-cmd="mysqladmin ping --silent"
           --health-interval=10s
