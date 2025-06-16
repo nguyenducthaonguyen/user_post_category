@@ -9,3 +9,25 @@ services:
       - .:/app
     env_file:
       - .env
+    depends_on:
+      - mysql
+
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: Nguyen@1997
+      MYSQL_DATABASE: test_user_post
+      MYSQL_USER: root
+      MYSQL_PASSWORD: Nguyen@1997
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  mysql-data:
