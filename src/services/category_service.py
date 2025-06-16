@@ -1,6 +1,5 @@
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
-from starlette.responses import JSONResponse
 
 from src.cores.exceptions import APIException
 from src.repositories.category_repository import CategoryRepository

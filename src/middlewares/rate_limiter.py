@@ -4,7 +4,6 @@ from starlette.requests import Request
 from starlette.responses import JSONResponse
 
 from src.cores.dependencies import get_db
-from src.repositories.rate_limiter_repository import RateLimiterRepository
 from src.services.rate_limiter_service import RateLimiterService
 
 

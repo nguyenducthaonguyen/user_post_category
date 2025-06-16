@@ -39,8 +39,10 @@ class AuthMiddleware(BaseHTTPMiddleware):
 
         except HTTPException as e:
             return self._error_response(e.status_code, e.detail, request.url.path)
-        except Exception:
-            return self._error_response(500, "Internal Server Error", request.url.path)
+        except Exception as e:
+            return self._error_response(
+                500, f"Internal Server Error: {e}", request.url.path
+            )
         finally:
             try:
                 db_generator.close()  # đảm bảo không rò rỉ session

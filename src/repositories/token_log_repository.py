@@ -1,7 +1,5 @@
-from datetime import timezone
 from typing import Optional
 
-from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from src.models.token_logs import TokenLog

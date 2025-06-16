@@ -203,9 +203,6 @@ def test_should_return_200_when_change_password_valid_data(
     assert "Change password successfully" in response.body.decode()
 
 
-import pytest
-
-
 def test_should_return_400_when_change_password_password_old_fail(
     user_service, mocker, mock_users
 ):
@@ -413,7 +410,7 @@ def test_should_return_user_when_block_user_for_user(user_service, mocker, mock_
 
 
 def test_should_raise_400_when_update_user_for_email_already_registered(
-    user_service, mocker, mock_users
+    user_service, mock_users
 ):
     # user hiện tại
     user = mock_users[0]
@@ -427,14 +424,14 @@ def test_should_raise_400_when_update_user_for_email_already_registered(
 
     # Dữ liệu update: email đã có người dùng khác
     updated_data = UserUpdateRequest(
-        email="Nguyen@gmail.com",  # Trùng với other_user
+        email="Nguyen@gmail.com",  # type: ignore
         fullname="New Name",
-        gender="male",
+        gender="male",  # type: ignore
     )
     updated_data2 = UserUpdateRequest(
-        email="Nguyen2@gmail.com",  # Trùng với other_user
+        email="Nguyen2@gmail.com",  # type: ignore
         fullname="New Name",
-        gender="male",
+        gender="male",  # type: ignore
     )
 
     with pytest.raises(HTTPException) as exc_info:

@@ -4,7 +4,6 @@ from sqlalchemy import String
 from sqlalchemy.orm import relationship
 
 from src.cores.database import Base
-from src.models.active_access_tokens import ActiveAccessToken
 from src.models.base import BaseMixin
 from src.models.enums import GenderEnum, RoleEnum
 

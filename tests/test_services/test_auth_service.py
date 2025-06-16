@@ -4,7 +4,6 @@ from src.models.enums import GenderEnum
 from src.schemas.users import UserCreate
 from src.services.auth_service import AuthService
 from tests.conftest import get_test_db
-from tests.test_services.test_active_access_token_service import sample_users
 
 
 @pytest.fixture
@@ -22,7 +21,7 @@ def auth_service(db_session):
 def test_should_return_user_when_data_valid(auth_service):
     user_data = UserCreate(
         username="newuser",
-        email="Nguyen@gmail.com",
+        email="Nguyen@gmail.com",  # type: ignore
         password="password123",
         fullname="Nguyen Van A",
         gender=GenderEnum.male,
@@ -36,7 +35,7 @@ def test_should_return_user_when_data_valid(auth_service):
 def test_should_raise_400_when_register_user_username_already(auth_service):
     user_data = UserCreate(
         username="newuser",
-        email="Nguyen1@gmail.com",
+        email="Nguyen1@gmail.com",  # type: ignore
         password="password123",
         fullname="Nguyen Van A",
         gender=GenderEnum.male,
@@ -49,7 +48,7 @@ def test_should_raise_400_when_register_user_username_already(auth_service):
 def test_should_raise_400_when_register_user_email_already(auth_service):
     user_data = UserCreate(
         username="newuser1",
-        email="Nguyen@gmail.com",
+        email="Nguyen@gmail.com",  # type: ignore
         password="password123",
         fullname="Nguyen Van A",
         gender=GenderEnum.male,

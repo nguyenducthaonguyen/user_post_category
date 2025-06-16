@@ -9,6 +9,9 @@ from sqlalchemy.orm import sessionmaker
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ENV_PATH = os.path.join(ROOT_DIR, ".env.test")
 load_dotenv(dotenv_path=ENV_PATH, override=True)
+
+from src.cores.database import Base
+
 TEST_DATABASE_URL = os.getenv("DATABASE_URL")
 test_engine = create_engine(
     TEST_DATABASE_URL,
@@ -26,9 +29,6 @@ def setup_test_db():
     Base.metadata.create_all(bind=test_engine)
     yield
     Base.metadata.drop_all(bind=test_engine)
-
-
-from src.cores.database import Base
 
 
 # Dependency override

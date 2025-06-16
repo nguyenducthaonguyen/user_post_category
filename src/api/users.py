@@ -1,12 +1,9 @@
-from typing import Optional
-
 from fastapi import APIRouter, Depends, Query, Request
 from sqlalchemy.orm import Session
 from starlette.responses import JSONResponse
 
-from src.cores.dependencies import get_current_user, get_db
-from src.models.users import User
-from src.schemas.response import MessageResponse, PaginatedResponse, StandardResponse
+from src.cores.dependencies import get_db
+from src.schemas.response import PaginatedResponse, StandardResponse
 from src.schemas.users import PasswordChangeRequest, UserRead, UserUpdateRequest
 from src.services.user_service import UserService
 
@@ -63,7 +60,7 @@ def update_current_user_info(
     service: UserService = Depends(get_user_service),
 ):
     current_user = request.state.user
-    user = service.update_user(current_user.id, user_update)
+    service.update_user(current_user.id, user_update)
     return JSONResponse(
         status_code=200,
         content={

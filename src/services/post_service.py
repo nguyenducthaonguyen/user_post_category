@@ -7,8 +7,9 @@ from starlette.responses import JSONResponse
 from src.models import Category
 from src.models.posts import Post
 from src.models.users import User
-from src.repositories import CategoryRepository, UserRepository
+from src.repositories.category_repository import CategoryRepository
 from src.repositories.post_repository import PostRepository
+from src.repositories.user_repository import UserRepository
 from src.schemas.posts import PostCreate, PostRead, PostUpdate
 
 
@@ -19,7 +20,7 @@ class PostService:
         self.user_repo = UserRepository(db)
         self.category_repo = CategoryRepository(db)
 
-    def _get_user_and_check_status(self, user_id: str) -> User:
+    def _get_user_and_check_status(self, user_id: str) -> type[User]:
         """
         Lấy user theo user_id và kiểm tra trạng thái hoạt động.
         Nếu không tìm thấy hoặc user bị block, raise HTTPException.

@@ -1,11 +1,10 @@
 from datetime import datetime, timedelta, timezone
-from typing import List
 
 from sqlalchemy.orm import Session
 
 from src.cores.config import settings
 from src.repositories.token_log_repository import TokenLogRepository
-from src.schemas.token_log import TokenLogCreate, TokenLogResponse
+from src.schemas.token_log import TokenLogCreate
 
 
 class TokenLogService:
@@ -54,8 +53,9 @@ class TokenLogService:
             return self._is_refresh_suspicious(time_diff)
         return False
 
+    @staticmethod
     def _is_login_suspicious(
-        self, ip_changed: bool, agent_changed: bool, time_diff: timedelta
+        ip_changed: bool, agent_changed: bool, time_diff: timedelta
     ) -> bool:
         if (
             ip_changed or agent_changed
@@ -63,5 +63,6 @@ class TokenLogService:
             return True
         return False
 
-    def _is_refresh_suspicious(self, time_diff: timedelta) -> bool:
+    @staticmethod
+    def _is_refresh_suspicious(time_diff: timedelta) -> bool:
         return time_diff.total_seconds() < settings.SUSPICIOUS_REFRESH_TIME_WINDOW

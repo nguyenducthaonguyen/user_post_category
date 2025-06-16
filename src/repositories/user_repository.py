@@ -21,10 +21,11 @@ class UserRepository:
             self.db.rollback()
             raise e
 
-    def get(self, user_id: str) -> User:
-        return self.db.get(User, user_id)
+    def get(self, user_id: str):
+        user = self.db.get(User, user_id)
+        return user
 
-    def get_user_by_email(self, email: str) -> Optional[User]:
+    def get_user_by_email(self, email: str):
         return self.db.query(User).filter(User.email == email).first()
 
     def get_user_by_username(self, username: str) -> Optional[User]:
@@ -77,8 +78,8 @@ class UserRepository:
             self.db.rollback()
             raise e
 
+    @staticmethod
     def _filter_by_name_and_status(
-        self,
         query,
         name: Optional[str],
         is_active: Optional[bool],

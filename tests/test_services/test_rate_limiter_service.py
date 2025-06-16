@@ -3,9 +3,16 @@ from datetime import datetime, timezone
 import pytest
 
 from src.models import TokenUsageLog
+from src.services.blacklist_token_service import BlacklistTokenService
 from src.services.rate_limiter_service import RateLimiterService
-from tests.test_services.test_active_access_token_service import db_session
-from tests.test_services.test_black_token_service import blacklist_token_service
+from tests.conftest import get_test_db
+
+
+@pytest.fixture
+def db_session():
+    session = next(get_test_db())
+    yield session
+    session.close()
 
 
 @pytest.fixture
@@ -32,6 +39,11 @@ def sample_token_usage(db_session):
 @pytest.fixture
 def rate_limiter_service(db_session):
     return RateLimiterService(db=db_session)
+
+
+@pytest.fixture
+def blacklist_token_service(db_session):
+    return BlacklistTokenService(db=db_session)
 
 
 def test_should_return_true_when_token_is_rate_limited(

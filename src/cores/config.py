@@ -17,8 +17,8 @@ class Settings(BaseSettings):
     SECRET_KEY: str
 
     ALGORITHM: str = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int
-    REFRESH_TOKEN_EXPIRE_DAYS: int
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 15
+    REFRESH_TOKEN_EXPIRE_DAYS: int = 7
 
     BLACKLIST_TOKEN_EXPIRE_MINUTES: int = 30
     TOKEN_USAGE_LOG_EXPIRE_MINUTES: int = 1
@@ -31,9 +31,9 @@ class Settings(BaseSettings):
     ENVIRONMENT: Environment = Environment.PRODUCTION
     SENTRY_DSN: Optional[str] = None
 
-    CORS_ORIGINS: list[str]
+    CORS_ORIGINS: list[str] = ["*"]  # Default to allow all origins
     CORS_ORIGINS_REGEX: Optional[str] = None
-    CORS_HEADERS: list[str]
+    CORS_HEADERS: list[str] = ["*"]  # Default to allow all headers
 
     APP_VERSION: str = "1.0"
 
@@ -45,7 +45,7 @@ class Settings(BaseSettings):
             raise RuntimeError("Missing required environment variable: SECRET_KEY")
 
         return cls(
-            DATABASE_URL=os.environ["DATABASE_URL"],
+            DATABASE_URL=MySQLDsn(os.environ["DATABASE_URL"]),
             SECRET_KEY=os.environ["SECRET_KEY"],
         )
 

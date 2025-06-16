@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict, EmailStr, constr, field_validator
+from pydantic import BaseModel, ConfigDict, EmailStr, constr
 
 from src.models.users import GenderEnum, RoleEnum
 

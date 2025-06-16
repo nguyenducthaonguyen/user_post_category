@@ -1,3 +1,5 @@
+from typing import Optional
+
 from fastapi import HTTPException, status
 from jose import ExpiredSignatureError, JWTError
 from sqlalchemy.orm import Session
@@ -6,7 +8,7 @@ from src.cores import auth
 from src.models.users import User
 
 
-def validate_token_and_get_user(token: str, db: Session) -> User:
+def validate_token_and_get_user(token: str, db: Session) -> Optional[User]:
     try:
         payload = auth.decode_token(token)
         username = payload.get("sub")

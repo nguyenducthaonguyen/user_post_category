@@ -65,7 +65,7 @@ def update_category(
 def delete_category(
     category_id: str, service: CategoryService = Depends(get_category_service)
 ):
-    category_response = service.get_category_by_id(category_id)
+    service.get_category_by_id(category_id)
     return StandardResponse(
         status_code=status.HTTP_200_OK,
         message="Category deleted successfully",

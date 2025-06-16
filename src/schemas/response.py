@@ -1,8 +1,6 @@
 from typing import Generic, List, Optional, TypeVar
 
-from pydantic import BaseModel, HttpUrl, constr
-
-from src.schemas.users import UserReadAdmin
+from pydantic import BaseModel, HttpUrl
 
 
 class PaginationSchema(BaseModel):
