@@ -14,7 +14,7 @@ class TokenLogService:
     def log_token_request(self, log_create: TokenLogCreate):
         return self.repo.create(log_create)
 
-    def get_paginated (self, skip: int = 0, limit: int = 200) -> List[TokenLogResponse]:
+    def get_paginated (self, skip: int = 0, limit: int = 200):
         return self.repo.get_paginated(skip, limit)
 
     def is_suspicious(

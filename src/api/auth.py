@@ -106,9 +106,7 @@ def refresh_token(request: Request,  db: Session = Depends(get_db)):
     # Xoá refresh token cũ khỏi session
     new_access_token = auth.create_access_token(username=str(user.username), role=user.role)
     save_access_token(db, new_access_token, user.id)
-    print(user.id)
     safe_log_token_action(db, user, "refresh", request)
-    print(user.id)
     # Trả token mới (client dùng để gọi API)
     return {
         "status_code": 200,
@@ -202,8 +200,9 @@ def log_token_action(db: Session, user: User, action: str, request: Request):
 
 
     if log_service.is_suspicious(user.id, ip, agent, action):
-        suspicious_log = TokenLogCreate(**{**log_data.model_dump(), "action": f"suspicious {action} detected"})
+        suspicious_log = TokenLogCreate(**{**log_data.model_dump(), "action": f"suspicious {action}"})
         log_service.log_token_request(suspicious_log)
+
 
 
 def log_session(db: Session, generated_refresh_token: str, request: Request, user: User):

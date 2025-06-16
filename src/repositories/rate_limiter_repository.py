@@ -48,3 +48,4 @@ class RateLimiterRepository:
         for token in expired_tokens:
             self.db.delete(token)
         self.db.commit()
+        return len(expired_tokens)

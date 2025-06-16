@@ -20,5 +20,5 @@ class BlacklistTokenService:
     def cleanup_expired_tokens(self, expire_minutes):
         expire_time = datetime.now(timezone.utc) - timedelta(minutes=expire_minutes)
         # Xóa tất cả token blacklist có blacklisted_at < expire_time
-        self.repo.delete_expired_tokens(expire_time)
+        return self.repo.delete_expired_tokens(expire_time)
 

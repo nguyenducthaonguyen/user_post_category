@@ -38,6 +38,13 @@ class PostService:
             categories = []
             if post_data.category_ids:
                 categories = self.db.query(Category).filter(Category.id.in_(post_data.category_ids)).all()
+                found_ids = {str(category.id) for category in categories}
+                requested_ids = set(post_data.category_ids)
+
+                missing_ids = requested_ids - found_ids
+                if missing_ids:
+                    raise HTTPException(status_code=400, detail=f"Invalid category IDs: {list(missing_ids)}")
+
             new_post = Post(
             title=post_data.title,
             content=post_data.content,

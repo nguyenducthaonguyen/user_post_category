@@ -40,7 +40,7 @@ async def lifespan(app: FastAPI):
                 except StopIteration:
                     pass  # Generator đã hoàn tất
 
-            await asyncio.sleep(600)
+            await asyncio.sleep(200)
 
     asyncio.create_task(cleanup_job())
     yield  # Đây là phần bắt buộc để FastAPI chạy đúng lifecycle

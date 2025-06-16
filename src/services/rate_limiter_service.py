@@ -23,4 +23,4 @@ class RateLimiterService:
 
     def cleanup_expired_tokens(self, expire_minutes: int):
         expire_time = datetime.now(timezone.utc) - timedelta(minutes=expire_minutes)
-        self.repo.delete_expired_tokens(expire_time)
+        return self.repo.delete_expired_tokens(expire_time)

@@ -265,3 +265,15 @@ def test_should_raise_400_when_delete_post_failed(post_service, mocker):
         post_service.delete_post("2", user_id="user2")
     assert exc_info.value.status_code == 400
     assert "Delete post failed: Mocked DB error" in exc_info.value.detail
+
+def test_should_raise_400_when_invalid_category_ids(post_service):
+    post_data = PostCreate(
+        title="New Post with Invalid Categories",
+        content="This post has invalid categories",
+        category_ids=["999", "998", "3"]  # Non-existent category
+    )
+    with pytest.raises(HTTPException) as exc_info:
+        post_service.create_post(post_data, user_id="user1")
+    assert exc_info.value.status_code == 400
+
+    assert "Invalid category IDs: ['999', '998']" in exc_info.value.detail
